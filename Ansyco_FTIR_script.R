@@ -26,10 +26,10 @@ FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
 FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O)
 
 ########### WIND & DWD DATA IMPORT #################
-wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/Wind Mast Data/WindMast_USA_wind_measurement/wind_WD_WS_data.txt")
+wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/wind_WD_WS_data.txt")
 wind_input$DateTime_WI3min <- ymd_hms(wind_input$DateTime_WI3min)
 
-DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/Wind Mast Data/WindMast_USA_wind_measurement/DWD_interpolated.txt")
+DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/DWD_interpolated.txt")
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
 
@@ -54,7 +54,7 @@ FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
 
 ############# FTIR SOUTH ONLY ##################
-FTIR_south  <- FTIRxwind  %>% filter(wind_direction >= 150, wind_direction <= 230)
+FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230)
 
 
 ############## WIND_GRAPH ######################
