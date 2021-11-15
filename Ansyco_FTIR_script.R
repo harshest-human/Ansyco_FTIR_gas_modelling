@@ -79,70 +79,73 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 #1 MessstellexCO2 South_East (Before  milking parlor)
 MessstellexCO2i <-  FTIR_south %>% select(Messstelle, CO2)%>%
-        filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle)) 
-CO2linregri <- lm(CO2~Messstelle, data=MessstellexCO2i)
-summary(CO2linregri)    
-boxplot(CO2~Messstelle, data=MessstellexCO2i, main = "CO2_South_East")
-abline(reg=CO2linregri, col="red")
+        filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
+CO2linmodi <- lm(CO2~Messstelle, data=MessstellexCO2i)
+summary(CO2linmodi)    
+anova(CO2linmodi)
+
+plot(CO2~Messstelle, data=MessstellexCO2i, main = "CO2_South_East")
+abline(reg=CO2linmodi, col="red")
+
 
 
 #1 MessstellexCO2 South_West (After  milking parlor)
 MessstellexCO2ii <-  FTIR_south %>% select(Messstelle, CO2) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle)) 
-CO2linregrii <- lm(CO2~Messstelle, data=MessstellexCO2ii)
-summary(CO2linregrii)    
+CO2linmodii <- lm(CO2~Messstelle, data=MessstellexCO2ii)
+summary(CO2linmodii)    
 boxplot(CO2~Messstelle, data=MessstellexCO2ii, main = "CO2_South_West")
-abline(reg=CO2linregrii, col="red")
+abline(reg=CO2linmodii, col="red")
 
 
 #2 MessstellexNH3 South_East (Before  milking parlor)
 MessstellexNH3i <- FTIR_south %>% select(Messstelle, NH3) %>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
-NH3linregri <- lm(NH3~Messstelle, data=MessstellexNH3i)
-summary(NH3linregri)    
+NH3linmodi <- lm(NH3~Messstelle, data=MessstellexNH3i)
+summary(NH3linmodi)    
 boxplot(NH3~Messstelle, data=MessstellexNH3i, main = "NH3_South_East")
-abline(reg=NH3linregri, col="red")
+abline(reg=NH3linmodi, col="red")
 
 #2 MessstellexNH3 South_West (After  milking parlor)
 MessstellexNH3ii <- FTIR_south %>% select(Messstelle, NH3) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle))
-NH3linregrii <- lm(NH3~Messstelle, data=MessstellexNH3ii)
-summary(NH3linregrii)    
+NH3linmodii <- lm(NH3~Messstelle, data=MessstellexNH3ii)
+summary(NH3linmodii)    
 boxplot(NH3~Messstelle, data=MessstellexNH3ii, main = "NH3_South_West")
-abline(reg=NH3linregrii, col="red")
+abline(reg=NH3linmodii, col="red")
 
 
 #3 MessstellexCH4 South_East (Before  milking parlor)
 MessstellexCH4i <- FTIR_south %>% select(Messstelle, CH4) %>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
-CH4linregri <- lm(CH4~Messstelle, data=MessstellexCH4i)
-summary(CH4linregri)    
+CH4linmodi <- lm(CH4~Messstelle, data=MessstellexCH4i)
+summary(CH4linmodi)    
 boxplot(CH4~Messstelle, data=MessstellexCH4i, main = "CH4_South_East")
-abline(reg=CH4linregri, col="red")
+abline(reg=CH4linmodi, col="red")
 
 #3 MessstellexCH4 South_West (After  milking parlor)
 MessstellexCH4ii <- FTIR_south %>% select(Messstelle, CH4) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle))
-CH4linregrii <- lm(CH4~Messstelle, data=MessstellexCH4ii)
-anova(CH4linregrii)
-summary(CH4linregrii)    
+CH4linmodii <- lm(CH4~Messstelle, data=MessstellexCH4ii)
+anova(CH4linmodii)
+summary(CH4linmodii)    
 boxplot(CH4~Messstelle, data=MessstellexCH4ii, main = "CH4_South_West")
-abline(reg=CH4linregrii, col="red")
+abline(reg=CH4linmodii, col="red")
 
-anova(CH4linregrii)
+anova(CH4linmodii)
 
 ############### RESIDUAL_ANALYSIS ########################
-expected <- fitted(CH4linregrii)
-residuals <- resid(CH4linregrii)
+expected <- fitted(CH4linmodii)
+residuals <- resid(CH4linmodii)
 
 boxplot(residuals, main="residual boxplot")
 plot(x=expected, y=residuals, xlab="expected values", ylab="residuals", main="residual plot")
 abline(h=0)
-plot(CH4linregrii, which=1:2)
+plot(CH4linmodii, which=1:2)
 
 # T-test
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
+anova(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
 
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==3,2 ])
@@ -159,4 +162,5 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 
 
 
-
+################ non-linear_modelling ##############
+#CO2quegri <- lm(CO2~Messstelle + I(Messstelle^2), data=MessstellexCO2i)
