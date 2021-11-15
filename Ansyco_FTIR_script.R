@@ -145,7 +145,7 @@ plot(CH4linmodii, which=1:2)
 
 # T-test
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
+anova(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
 
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==3,2 ])
