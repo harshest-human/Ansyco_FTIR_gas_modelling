@@ -26,15 +26,15 @@ FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
 FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O)
 
 ########### WIND & DWD DATA IMPORT #################
-wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/wind_WD_WS_data.txt")
+wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/wind_WD_WS_data.txt")
 wind_input$DateTime_WI3min <- ymd_hms(wind_input$DateTime_WI3min)
 
-DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/DWD_interpolated.txt")
+DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/DWD_interpolated.txt")
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
 
 ############## FTIR+WIND ######################
-FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O) %>% 
+FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:42:00"),
                DateTime_FI3min <= ymd_hms("2021-10-06 11:21:00"))
 
@@ -42,7 +42,7 @@ FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input,
                        by = c("DateTime_FI3min" = "DateTime_WI3min"))
 
 ############## FTIR+DWD ######################
-FTIR_06OCT_06NOV <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O) %>% 
+FTIR_06OCT_06NOV <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-10-06 11:24:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:21:00"))
 FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input, 
@@ -68,7 +68,7 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
                                ">2 - 4",
                                ">4 - 6",
                                ">6 - 12")),
-         key.header = "02.09.2021 - 06.10.2021",
+         key.header = "02.09.2021 - 06.11.2021",
          key.footer = "Wind_speed (m/s)",
          key.position = "bottom",
          par.settings=list(axis.line=list(col="lightgray")),
