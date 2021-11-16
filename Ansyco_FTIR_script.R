@@ -11,20 +11,20 @@ library(readxl)
 library(dplyr)
 library(openair)
 library(car)
+library(rvest)
 
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
         mutate(DateTime = paste(Datum, " ", Zeit)) %>%
         relocate(DateTime)
-
 FTIR_input$CO2 <- as.numeric(FTIR_input$CO2)
 FTIR_input$NH3 <- as.numeric(FTIR_input$NH3) 
 FTIR_input$CH4 <- as.numeric(FTIR_input$CH4) 
 FTIR_input$Messstelle <- as.numeric(FTIR_input$Messstelle)
 FTIR_input$DateTime <- ymd_hms(FTIR_input$DateTime)
 FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
-FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O)
+FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3)
 
 
 ########### WIND & DWD DATA IMPORT ########
@@ -35,12 +35,10 @@ DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
 
-
 ########### FTIR+WIND #####################
 FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:42:00"),
                DateTime_FI3min <= ymd_hms("2021-10-06 11:21:00"))
-
 FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input, 
                        by = c("DateTime_FI3min" = "DateTime_WI3min"))
 
@@ -53,15 +51,22 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
                       by = c("DateTime_FI3min" = "MESS_DATUM"))
 
 
-
 ########### FTIR+WIND+DWD ###################
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
 
+########### FTIR by wind_cardinal #################
+url <- 'http://snowfence.umn.edu/Components/winddirectionanddegreeswithouttable3.htm'
+page <- read_html(url)
+directions_raw <- page %>% html_node('td table') %>% html_table(header = TRUE)
+directions <- directions_raw %>% 
+        set_names(~tolower(sub(' Direction', '', .x))) %>% 
+        slice(-1) %>% 
+        separate(degree, c('degree_min', 'degree_max'), sep = '\\s+-\\s+', convert = TRUE)
 
-########### FTIR SOUTH ONLY #################
-FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230)
-
+FTIRxwindxDWD <- FTIRxwindxDWD  %>% mutate(wd_cardinal = cut(wind_direction, 
+                breaks = c(0, directions$degree_max, 360), 
+                labels = c(directions$cardinal, 'N')))
 
 
 ########### WIND_GRAPH ######################
@@ -81,6 +86,14 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          par.settings=list(axis.line=list(col="lightgray")),
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
+
+########### GAS_AT_DIFF_WIND ################
+boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
+boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
+boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
+
+########### FTIR SOUTH ONLY #################
+FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230) 
 
 
 ########### GAS_AT_DIFF_HEIGHT ##############
@@ -170,7 +183,7 @@ plot(CH4linmodii, which=1:2)
 
 # T-test
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-anova(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
+t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
 
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==3,2 ])
@@ -183,6 +196,29 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==6,2 ])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
