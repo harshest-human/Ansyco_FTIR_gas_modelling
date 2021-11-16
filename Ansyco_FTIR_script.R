@@ -1,4 +1,4 @@
-############### PACKAGES ######################
+########### PACKAGES ######################
 getwd()
 library(tidyverse)
 library(reshape2)
@@ -12,7 +12,8 @@ library(dplyr)
 library(openair)
 library(car)
 
-############## FTIR DATA IMPORT ####################
+
+########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
         mutate(DateTime = paste(Datum, " ", Zeit)) %>%
         relocate(DateTime)
@@ -25,7 +26,8 @@ FTIR_input$DateTime <- ymd_hms(FTIR_input$DateTime)
 FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
 FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3, H2O, N2O)
 
-########### WIND & DWD DATA IMPORT #################
+
+########### WIND & DWD DATA IMPORT ########
 wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/wind_WD_WS_data.txt")
 wind_input$DateTime_WI3min <- ymd_hms(wind_input$DateTime_WI3min)
 
@@ -33,7 +35,8 @@ DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
 
-############## FTIR+WIND ######################
+
+########### FTIR+WIND #####################
 FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:42:00"),
                DateTime_FI3min <= ymd_hms("2021-10-06 11:21:00"))
@@ -41,7 +44,8 @@ FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH
 FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input, 
                        by = c("DateTime_FI3min" = "DateTime_WI3min"))
 
-############## FTIR+DWD ######################
+
+########### FTIR+DWD ######################
 FTIR_06OCT_06NOV <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-10-06 11:24:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:21:00"))
@@ -49,15 +53,18 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
                       by = c("DateTime_FI3min" = "MESS_DATUM"))
 
 
-############## FTIR+WIND+DWD ###################
+
+########### FTIR+WIND+DWD ###################
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
 
-############# FTIR SOUTH ONLY ##################
+
+########### FTIR SOUTH ONLY #################
 FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230)
 
 
-############## WIND_GRAPH ######################
+
+########### WIND_GRAPH ######################
 windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          breaks = c(0,1,2,4,6,12),
          auto.text = FALSE,
@@ -75,16 +82,33 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
-########## GAS_CONCENTRATION_AT_DIFF_HEIGHT ##############
+
+########### GAS_AT_DIFF_HEIGHT ##############
 
 #1 MessstellexCO2 South_East (Before  milking parlor)
 MessstellexCO2i <-  FTIR_south %>% select(Messstelle, CO2)%>%
+        mutate(height = Messstelle) %>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
-CO2linmodi <- lm(CO2~Messstelle, data=MessstellexCO2i)
-summary(CO2linmodi)    
-anova(CO2linmodi)
 
-plot(CO2~Messstelle, data=MessstellexCO2i, main = "CO2_South_East")
+MessstellexCO2i$height <- recode_factor(MessstellexCO2i$height, 
+                                        "1" = 0.60,
+                                        "2" = 0.90,
+                                        "3" = 1.50,
+                                        "4" = 1.80,
+                                        "5" = 2.40,
+                                        "6" = 2.70)
+
+MessstellexCO2i$height <- as.character(MessstellexCO2i$height)
+MessstellexCO2i$height <- as.numeric(MessstellexCO2i$height)
+
+CO2quegri <- lm(CO2~height + I(height^2), data=MessstellexCO2i)
+CO2linmodi <- lm(CO2~height, data=MessstellexCO2i)
+
+summary(CO2quegri)    
+
+anova(CO2linmodi)
+scatter.smooth(MessstellexCO2i$height, y=MessstellexCO2i$CO2, main="southeast") 
+plot(CO2~height, data=MessstellexCO2i, main = "CO2_South_East")
 abline(reg=CO2linmodi, col="red")
 
 
@@ -134,7 +158,8 @@ abline(reg=CH4linmodii, col="red")
 
 anova(CH4linmodii)
 
-############### RESIDUAL_ANALYSIS ########################
+
+########### RESIDUAL_ANALYSIS #################
 expected <- fitted(CH4linmodii)
 residuals <- resid(CH4linmodii)
 
@@ -162,5 +187,4 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 
 
 
-################ non-linear_modelling ##############
-#CO2quegri <- lm(CO2~Messstelle + I(Messstelle^2), data=MessstellexCO2i)
+
