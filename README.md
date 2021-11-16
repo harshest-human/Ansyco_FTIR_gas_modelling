@@ -1,6 +1,6 @@
 
 ```{r setup, include=FALSE}
-Modelling of gas concentrations and wind profile 
+R project
 ```
 
 ## Introduction
