@@ -1,6 +1,6 @@
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Modelling of gas concentrations and wind profile 
 ```
 
 ## Introduction
