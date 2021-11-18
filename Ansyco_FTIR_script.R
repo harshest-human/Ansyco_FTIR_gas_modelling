@@ -18,13 +18,26 @@ library(rvest)
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
         mutate(DateTime = paste(Datum, " ", Zeit)) %>%
         relocate(DateTime)
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==1]  = "0.60"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==2]  = "0.90"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==3]  = "1.50"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==4]  = "1.80"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==5]  = "2.40"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==6]  = "2.70"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==7]  = "0.60"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==8]  = "0.90"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==9]  = "1.50"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==10] = "1.80"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==11] = "2.40"
+FTIR_input$height[as.numeric(FTIR_input$Messstelle)==12] = "2.70"
+FTIR_input$height <- as.numeric(FTIR_input$height)
 FTIR_input$CO2 <- as.numeric(FTIR_input$CO2)
 FTIR_input$NH3 <- as.numeric(FTIR_input$NH3) 
 FTIR_input$CH4 <- as.numeric(FTIR_input$CH4) 
 FTIR_input$Messstelle <- as.numeric(FTIR_input$Messstelle)
 FTIR_input$DateTime <- ymd_hms(FTIR_input$DateTime)
 FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
-FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3)
+FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, height, CO2, CH4, NH3)
 
 
 ########### WIND & DWD DATA IMPORT ########
@@ -36,7 +49,7 @@ DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
 
 ########### FTIR+WIND #####################
-FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
+FTIR_02SEP_06OCT <- select(FTIR_input, DateTime_FI3min, Messstelle, height, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:42:00"),
                DateTime_FI3min <= ymd_hms("2021-10-06 11:21:00"))
 FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input, 
@@ -44,7 +57,7 @@ FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input,
 
 
 ########### FTIR+DWD ######################
-FTIR_06OCT_06NOV <- select(FTIR_input, DateTime_FI3min, Messstelle, CO2, CH4, NH3) %>% 
+FTIR_06OCT_06NOV <- select(FTIR_input, DateTime_FI3min, Messstelle, height, CO2, CH4, NH3) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-10-06 11:24:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:21:00"))
 FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input, 
@@ -53,6 +66,7 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
 
 ########### FTIR+WIND+DWD ###################
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
+
 
 
 ########### FTIR by wind_cardinal #################
@@ -67,6 +81,12 @@ directions <- directions_raw %>%
 FTIRxwindxDWD <- FTIRxwindxDWD  %>% mutate(wd_cardinal = cut(wind_direction, 
                 breaks = c(0, directions$degree_max, 360), 
                 labels = c(directions$cardinal, 'N')))
+
+
+########### GAS_AT_DIFF_WIND ################
+boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
+boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
+boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
 
 
 ########### WIND_GRAPH ######################
@@ -87,11 +107,6 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
-########### GAS_AT_DIFF_WIND ################
-boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
-boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
-boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
-
 ########### FTIR SOUTH ONLY #################
 FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230) 
 
@@ -99,35 +114,17 @@ FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <
 ########### GAS_AT_DIFF_HEIGHT ##############
 
 #1 MessstellexCO2 South_East (Before  milking parlor)
-MessstellexCO2i <-  FTIR_south %>% select(Messstelle, CO2)%>%
-        mutate(height = Messstelle) %>%
+MessstellexCO2i <-  FTIR_south %>% select(Messstelle, height, CO2)%>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
-
-MessstellexCO2i$height <- recode_factor(MessstellexCO2i$height, 
-                                        "1" = 0.60,
-                                        "2" = 0.90,
-                                        "3" = 1.50,
-                                        "4" = 1.80,
-                                        "5" = 2.40,
-                                        "6" = 2.70)
-
-MessstellexCO2i$height <- as.character(MessstellexCO2i$height)
-MessstellexCO2i$height <- as.numeric(MessstellexCO2i$height)
-
 CO2quegri <- lm(CO2~height + I(height^2), data=MessstellexCO2i)
 CO2linmodi <- lm(CO2~height, data=MessstellexCO2i)
-
-summary(CO2quegri)    
-
-anova(CO2linmodi)
-scatter.smooth(MessstellexCO2i$height, y=MessstellexCO2i$CO2, main="southeast") 
-plot(CO2~height, data=MessstellexCO2i, main = "CO2_South_East")
+ 
+plot(CO2~Messstelle, data=MessstellexCO2i, main = "CO2_South_East")
 abline(reg=CO2linmodi, col="red")
 
 
-
 #1 MessstellexCO2 South_West (After  milking parlor)
-MessstellexCO2ii <-  FTIR_south %>% select(Messstelle, CO2) %>%
+MessstellexCO2ii <-  FTIR_south %>% select(Messstelle, height, CO2)%>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle)) 
 CO2linmodii <- lm(CO2~Messstelle, data=MessstellexCO2ii)
 summary(CO2linmodii)    
@@ -136,7 +133,7 @@ abline(reg=CO2linmodii, col="red")
 
 
 #2 MessstellexNH3 South_East (Before  milking parlor)
-MessstellexNH3i <- FTIR_south %>% select(Messstelle, NH3) %>%
+MessstellexNH3i <- FTIR_south %>% select(Messstelle, height, NH3) %>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
 NH3linmodi <- lm(NH3~Messstelle, data=MessstellexNH3i)
 summary(NH3linmodi)    
@@ -144,7 +141,7 @@ boxplot(NH3~Messstelle, data=MessstellexNH3i, main = "NH3_South_East")
 abline(reg=NH3linmodi, col="red")
 
 #2 MessstellexNH3 South_West (After  milking parlor)
-MessstellexNH3ii <- FTIR_south %>% select(Messstelle, NH3) %>%
+MessstellexNH3ii <- FTIR_south %>% select(Messstelle, height, NH3) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle))
 NH3linmodii <- lm(NH3~Messstelle, data=MessstellexNH3ii)
 summary(NH3linmodii)    
@@ -153,7 +150,7 @@ abline(reg=NH3linmodii, col="red")
 
 
 #3 MessstellexCH4 South_East (Before  milking parlor)
-MessstellexCH4i <- FTIR_south %>% select(Messstelle, CH4) %>%
+MessstellexCH4i <- FTIR_south %>% select(Messstelle, height, CH4) %>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
 CH4linmodi <- lm(CH4~Messstelle, data=MessstellexCH4i)
 summary(CH4linmodi)    
@@ -161,7 +158,7 @@ boxplot(CH4~Messstelle, data=MessstellexCH4i, main = "CH4_South_East")
 abline(reg=CH4linmodi, col="red")
 
 #3 MessstellexCH4 South_West (After  milking parlor)
-MessstellexCH4ii <- FTIR_south %>% select(Messstelle, CH4) %>%
+MessstellexCH4ii <- FTIR_south %>% select(Messstelle, height, CH4) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle))
 CH4linmodii <- lm(CH4~Messstelle, data=MessstellexCH4ii)
 anova(CH4linmodii)
