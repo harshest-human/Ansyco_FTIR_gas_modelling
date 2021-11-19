@@ -71,17 +71,17 @@ boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
 boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
 boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
 
-heightxCO2xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CO2) %>% na.omit(FTIRxwindxDWD)
+heightxCO2xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CO2)%>% na.omit(FTIRxwindxDWD)
 qplot(data=heightxCO2xwind , x= as.factor(height), fill=wd_cardinal, CO2, geom= "boxplot") + 
         ggtitle("CO2 at varying heights and wind directions") +
         scale_y_continuous(limits = c(300, 1200), breaks = seq(300, 1200, by = 100)) 
 
-heightxCH4xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CH4)
+heightxCH4xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CH4)%>% na.omit(FTIRxwindxDWD)
 qplot(data=heightxCH4xwind, x= as.factor(height), fill= wd_cardinal, y= CH4, geom= "boxplot") + 
         ggtitle("CH4 at varying heights and wind directions") +
         scale_y_continuous(limits = c(10, 60), breaks = seq(10, 60, by = 10))
 
-heightxNH3xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, NH3)
+heightxNH3xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, NH3)%>% na.omit(FTIRxwindxDWD)
 qplot(data=heightxNH3xwind, x= as.factor(height), fill= wd_cardinal, y= NH3, geom= "boxplot") + 
         ggtitle("NH3 at varying heights and wind directions")+
         scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, by = 0.5))
