@@ -43,7 +43,6 @@ FTIR_input <- select(FTIR_input, DateTime_FI3min, Messstelle, height, CO2, CH4, 
 ########### WIND & DWD DATA IMPORT ########
 wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/wind_WD_WS_data.txt")
 wind_input$DateTime_WI3min <- ymd_hms(wind_input$DateTime_WI3min)
-
 DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/DWD_interpolated.txt")
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
 
@@ -84,7 +83,7 @@ qplot(data=heightxCH4xwind, x= as.factor(height), col= wd_cardinal, y= CH4, geom
         scale_y_continuous(limits = c(10, 60), breaks = seq(10, 60, by = 10))
 
 heightxNH3xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, NH3)
-qplot(data=heightxNH3xwind, x= height, col= wd_cardinal, y= NH3, geom= "boxplot") + 
+qplot(data=heightxNH3xwind, x= as.factor(height), col= wd_cardinal, y= NH3, geom= "boxplot") + 
         ggtitle("NH3 at varying heights and wind directions")+
         scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, by = 0.5))
 
@@ -111,7 +110,8 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 
 ########### FTIR SOUTH ONLY #################
-FTIR_south  <- FTIRxwindxDWD  %>% filter(wind_direction >= 150, wind_direction <= 230) 
+FTIR_south  <- FTIRxwindxDWD  %>% 
+        filter(wind_direction >= 150, wind_direction <= 230) 
 
 
 ########### GAS_AT_DIFF_HEIGHT ##############
@@ -164,7 +164,6 @@ abline(reg=CH4linmodi, col="red")
 MessstellexCH4ii <- FTIR_south %>% select(Messstelle, height, CH4) %>%
         filter(Messstelle <=12, Messstelle >=7) %>% convert(fct(Messstelle))
 CH4linmodii <- lm(CH4~Messstelle, data=MessstellexCH4ii)
-anova(CH4linmodii)
 summary(CH4linmodii)    
 boxplot(CH4~Messstelle, data=MessstellexCH4ii, main = "CH4_South_West")
 abline(reg=CH4linmodii, col="red")
@@ -181,7 +180,7 @@ plot(x=expected, y=residuals, xlab="expected values", ylab="residuals", main="re
 abline(h=0)
 plot(CH4linmodii, which=1:2)
 
-# T-test
+############### T-test ########################
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
 
