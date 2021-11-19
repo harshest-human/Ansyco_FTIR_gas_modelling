@@ -79,14 +79,25 @@ length(FTIRxwindxDWD$NH3)
 
 ########### GAS_AT_DIFF_WIND ################
 heightxCO2xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CO2)%>% na.omit(FTIRxwindxDWD)
-qplot(data=heightxCO2xwind , x= as.factor(height), fill=wd_cardinal, CO2, geom= "boxplot") + 
+qplot(data=heightxCO2xwind ,x= height, y=CO2, geom= "point") + 
         ggtitle("CO2 at varying heights and wind directions") +
-        scale_y_continuous(limits = c(300, 1200), breaks = seq(300, 1200, by = 100)) 
+        scale_y_continuous(breaks = seq(0, 1400, by = 100)) +
+        scale_x_continuous(breaks = c(0.6, 0.9, 1.5, 1.8, 2.4, 2.7)) +
+        stat_smooth(method="lm")+
+        theme_bw() +
+        geom_line()
+
+CO2linmod <- lm(CO2~height, data=heightxCO2xwind)
+summary(CO2linmod)
+                                   
 
 heightxCH4xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CH4)%>% na.omit(FTIRxwindxDWD)
-qplot(data=heightxCH4xwind, x= as.factor(height), fill= wd_cardinal, y= CH4, geom= "boxplot") + 
+qplot(data=heightxCH4xwind ,x= height, y= CH4, geom= "point") + 
         ggtitle("CH4 at varying heights and wind directions") +
-        scale_y_continuous(limits = c(10, 60), breaks = seq(10, 60, by = 10))
+        scale_y_continuous(limits = c(10, 60), breaks = seq(10, 60, by = 10))+
+        scale_x_continuous(breaks = c(0.6, 0.9, 1.5, 1.8, 2.4, 2.7)) +
+        stat_smooth(method="lm")+
+        theme_bw()
 
 heightxNH3xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, NH3)%>% na.omit(FTIRxwindxDWD)
 qplot(data=heightxNH3xwind, x= as.factor(height), fill= wd_cardinal, y= NH3, geom= "boxplot") + 
