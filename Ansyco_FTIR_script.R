@@ -65,12 +65,19 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
 ########### FTIR+WIND+DWD ###################
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
+FTIRxwindxDWD <- select(FTIRxwindxDWD,
+                        DateTime_FI3min,Messstelle,
+                        height,CO2,CH4,NH3,
+                        wind_direction,wd_cardinal,wind_speed) %>% 
+        filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
+               DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00"))
+
+length(FTIRxwindxDWD$CO2)
+length(FTIRxwindxDWD$CH4)
+length(FTIRxwindxDWD$NH3)
+
 
 ########### GAS_AT_DIFF_WIND ################
-boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
-boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
-boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
-
 heightxCO2xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CO2)%>% na.omit(FTIRxwindxDWD)
 qplot(data=heightxCO2xwind , x= as.factor(height), fill=wd_cardinal, CO2, geom= "boxplot") + 
         ggtitle("CO2 at varying heights and wind directions") +
@@ -85,9 +92,6 @@ heightxNH3xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, NH3)%>% na.omit(F
 qplot(data=heightxNH3xwind, x= as.factor(height), fill= wd_cardinal, y= NH3, geom= "boxplot") + 
         ggtitle("NH3 at varying heights and wind directions")+
         scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, by = 0.5))
-
-CO2linmod <- lm(CO2~wd_cardinal, data=heightxCO2xwind )
-summary(CO2linmod)
 
 
 ########### WIND_GRAPH ######################
