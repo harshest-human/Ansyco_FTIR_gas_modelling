@@ -11,7 +11,6 @@ library(readxl)
 library(dplyr)
 library(openair)
 library(car)
-library(rvest)
 
 
 ########### FTIR DATA IMPORT ###############
