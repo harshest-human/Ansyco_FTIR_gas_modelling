@@ -68,7 +68,6 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
 
-
 ########### FTIR by wind_cardinal #################
 url <- 'http://snowfence.umn.edu/Components/winddirectionanddegreeswithouttable3.htm'
 page <- read_html(url)
@@ -79,15 +78,37 @@ directions <- directions_raw %>%
         separate(degree, c('degree_min', 'degree_max'), sep = '\\s+-\\s+', convert = TRUE)
 
 FTIRxwindxDWD <- FTIRxwindxDWD  %>% mutate(wd_cardinal = cut(wind_direction, 
-                breaks = c(0, directions$degree_max, 360), 
-                labels = c(directions$cardinal, 'N')))
-
+                                                             breaks = c(0, directions$degree_max, 360), 
+                                                             labels = c(directions$cardinal, 'N')))
 
 ########### GAS_AT_DIFF_WIND ################
 boxplot(CO2~wd_cardinal, data=FTIRxwindxDWD, main = "CO2_wind")
 boxplot(CH4~wd_cardinal, data=FTIRxwindxDWD, main = "CH4_wind")
 boxplot(NH3~wd_cardinal, data=FTIRxwindxDWD, main = "NH3_wind")
 
+heightxCO2xwind <-  select(FTIRxwindxDWD, height, wd_cardinal, CO2)
+qplot(data=heightxCO2xwind , x= as.factor(height), col= wd_cardinal, CO2, geom= "boxplot") + 
+        ggtitle("CO2 at varying heights and wind directions") +
+        scale_y_continuous(limits = c(300, 1200), breaks = seq(300, 1200, by = 100)) 
+
+
+CO2linmod <- lm(CO2~wd_cardinal, data=heightxCO2xwind )
+summary(CO2linmod)
+anova(CO2linmod)
+
+
+heightxCH4xwind <-  FTIRxwindxDWD %>% select(Messstelle, height, wd_cardinal, CH4)%>%
+        filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
+qplot(data=heightxCH4xwind, x= as.factor(height), col= wd_cardinal, y= CH4, geom= "boxplot") + 
+        ggtitle("CH4 at varying heights and wind directions") +
+        scale_y_continuous(limits = c(10, 60), breaks = seq(10, 60, by = 10))
+
+
+heightxNH3xwind <-  FTIRxwindxDWD %>% select(Messstelle, height, wd_cardinal, NH3)%>%
+        filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
+qplot(data=heightxNH3xwind, x= Messstelle, col= wd_cardinal, y= NH3, geom= "boxplot") + 
+        ggtitle("NH3 at varying heights and wind directions")+
+        scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, by = 0.5))
 
 ########### WIND_GRAPH ######################
 windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
@@ -118,7 +139,7 @@ MessstellexCO2i <-  FTIR_south %>% select(Messstelle, height, CO2)%>%
         filter(Messstelle <=6, Messstelle >=1) %>% convert(fct(Messstelle))
 CO2quegri <- lm(CO2~height + I(height^2), data=MessstellexCO2i)
 CO2linmodi <- lm(CO2~height, data=MessstellexCO2i)
- 
+summary(CO2linmodi)
 plot(CO2~Messstelle, data=MessstellexCO2i, main = "CO2_South_East")
 abline(reg=CO2linmodi, col="red")
 
@@ -196,13 +217,24 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 
 
 
-
-
-
-
-
-
-
+######## _combine wd_cardinals #############
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "North"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northeast"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northeast"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "Northwest"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "Northwest"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "E"]  = "East"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "East"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "East"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "S"]  = "South"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "Southeast"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "Southeast"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "Southwest"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "Southwest"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "W"]  = "West"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "West"
+#FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "West"
+#FTIRxwindxDWD <- select(FTIRxwindxDWD, -wd_cardinal)
 
 
 
