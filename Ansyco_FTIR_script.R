@@ -11,7 +11,7 @@ library(readxl)
 library(dplyr)
 library(openair)
 library(car)
-
+library(gtsummary)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -195,9 +195,13 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
 t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==6,2 ])
 
+p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,height)
+tbl_summary(p_table, by = height, missing = "no") %>%
+        add_p()
 
 
 ######## _combine wd_cardinals #############
+
 #FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "North"
 #FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northeast"
 #FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northeast"
@@ -215,6 +219,9 @@ t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[Messst
 #FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "West"
 #FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "West"
 #FTIRxwindxDWD <- select(FTIRxwindxDWD, -wd_cardinal)
+
+
+
 
 
 
