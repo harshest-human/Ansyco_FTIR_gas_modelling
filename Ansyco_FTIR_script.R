@@ -12,7 +12,9 @@ library(dplyr)
 library(openair)
 library(car)
 library(gtsummary)
-
+library(xlsx)
+library(ggpubr)
+library(stargazer)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -34,8 +36,8 @@ FTIR_input$height[as.numeric(FTIR_input$Messstelle)==11] = "2.40"
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==12] = "2.70"
 
  #Categorize Messstelle into Pipe_location
-FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)>=7]  = "SW"
-FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)<=6]  = "SE" 
+FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)>=7]  = "SW Pipe"
+FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)<=6]  = "SE Pipe" 
 
  #Manipulation of strings
 FTIR_input$height <- as.numeric(FTIR_input$height)
@@ -80,18 +82,18 @@ FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
  #Integration of 16 wind_cardinals
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "Northwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "Northwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "North"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "North"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "North"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "North"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "E"]  = "East"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "East"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "East"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "S"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "Southeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "Southeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "Southwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "Southwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "South"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "South"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "South"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "South"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "W"]  = "West"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "West"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "West"
@@ -110,18 +112,18 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
 
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
         ggtitle("CO2 at varying heights ")+
-        xlab("Height (m)") + ylab("CO2 (ppm)")+
-        geom_boxplot()
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_boxplot() + stat_compare_means(method = "t.test")
 
 CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
         ggtitle("CH4 at varying heights ")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+
-        geom_boxplot()
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_boxplot() + stat_compare_means(method = "t.test")
 
 NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
         ggtitle("NH3 at varying heights ")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+
-        geom_boxplot()
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
+        geom_boxplot() + stat_compare_means(method = "t.test")
 
 CO2xheight
 CH4xheight
@@ -148,29 +150,27 @@ Wind_roses <- windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction"
 Wind_roses
 
 
-########### GAS_CONCENTRATIONS_VS_WIND ################
-CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=height,y=CO2,col=wd_cardinals))+ 
-        geom_point() + 
-        ggtitle("CO2 at varying heights and wind directions") +
-        xlab("Height (m)") + ylab("CO2 (ppm)") + 
+########### GAS_CONCENTRATIONS_VS_WIND ############
+CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y=CO2,col=wd_cardinals))+ 
+        geom_boxplot() + 
+        ggtitle("CO2 at varying heights and wind directions")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(0,1400, by = 100)) +
-        scale_x_continuous(breaks = c(0.6,0.9,1.5,1.8,2.4,2.7)) +
         geom_smooth(method = "lm")
 
-CH4xwind <- ggplot(FTIRxwindxDWD,aes(x=height,y= CH4,col=wd_cardinals))+ 
-        geom_point() + 
-        ggtitle("CH4 at varying heights and wind directions") +
-        xlab("Height (m)") + ylab("CH4 (ppm)") +
+CH4xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= CH4,col=wd_cardinals))+ 
+        geom_boxplot() + 
+        ggtitle("CH4 at varying heights and wind directions")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(10,100, by = 10))+
-        scale_x_continuous(breaks = c(0.6,0.9,1.5,1.8,2.4,2.7)) +
         geom_smooth(method = "lm")
 
 
-NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=height,y= NH3,col= wd_cardinals))+
-        geom_point() +
+NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinals))+
+        geom_boxplot()+
         ggtitle("NH3 at varying heights and wind directions")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(0, 10, by = 0.5))+
-        scale_x_continuous(breaks = c(0.6, 0.9, 1.5, 1.8, 2.4, 2.7)) +
         geom_smooth(method = "lm")
 
 CO2xwind
@@ -178,17 +178,38 @@ CH4xwind
 NH3xwind
 
 
+########### Linear Modelling & ANOVA ############
+CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
+anova(CO2_lm)
+
+CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
+anova(CH4_lm)
+
+NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
+anova(NH3_lm)
+
+#stargazer(CO2_lm,CH4_lm,NH3_lm, type = "text")
+
+
 ############### T-test ########################
 p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,Messstelle)
-tbl_summary(p_table, by = Messstelle, missing = "no") %>%
+gtsummary::tbl_summary(p_table, by = Messstelle, missing = "no") %>%
         add_p()
 
 
-#+ stat_compare_means(method = "t.test")
+########### Mean & SD Tibble ##################
+Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>% 
+        summarise(CO2_mean=mean(CO2), CO2_sd=sd(CO2), 
+                  CH4_mean=mean(CH4), CH4_sd=sd(CH4),
+                  NH3_mean=mean(NH3), NH3_sd=sd(NH3),
+                  ws_mean = mean(wind_speed), ws_sd = sd(wind_speed))
 
 
+########### Write table (dataframe.xlsx) ##################
+
+write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx", sheetName = "Sheet1", 
+           col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
-
-
+write.xlsx(Gas_tibble,"Gas_tibble.xlsx")
 
