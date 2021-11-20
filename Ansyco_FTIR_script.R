@@ -103,7 +103,7 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
                         wind_direction,wind_speed,
                         wd_cardinals,-wd_cardinal) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
-               DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00"))
+               DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
 
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
@@ -178,31 +178,7 @@ CH4xwind
 NH3xwind
 
 
-########### RESIDUAL_ANALYSIS #################
-expected <- fitted(CH4linmodii)
-residuals <- resid(CH4linmodii)
-
-boxplot(residuals, main="residual boxplot")
-plot(x=expected, y=residuals, xlab="expected values", ylab="residuals", main="residual plot")
-abline(h=0)
-plot(CH4linmodii, which=1:2)
-
 ############### T-test ########################
-MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==2,2 ])
-
-MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==3,2 ])
-
-MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==4,2 ])
-
-MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==5,2 ])
-
-MessstellexCO2i %>% group_by(Messstelle) %>% summarise(check = mean(CO2)) #mean tibble
-t.test(MessstellexCO2i[MessstellexCO2i$Messstelle==1, 2], MessstellexCO2i[MessstellexCO2i$Messstelle==6,2 ])
-
 p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,Messstelle)
 tbl_summary(p_table, by = Messstelle, missing = "no") %>%
         add_p()
