@@ -12,7 +12,7 @@ library(dplyr)
 library(openair)
 library(car)
 library(gtsummary)
-
+library(xlsx)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -105,6 +105,9 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
+write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx", sheetName = "Sheet1", 
+           col.names = TRUE, row.names = TRUE, append = FALSE)
+
 
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
 
@@ -184,11 +187,13 @@ tbl_summary(p_table, by = Messstelle, missing = "no") %>%
         add_p()
 
 
-#+ stat_compare_means(method = "t.test")
+####### Mean & SD Tibble ########
+Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>% 
+        summarise(CO2_mean=mean(CO2), CO2_sd=sd(CO2), 
+                  CH4_mean=mean(CH4), CH4_sd=sd(CH4),
+                  NH3_mean=mean(NH3), NH3_sd=sd(NH3),
+                  ws_mean = mean(wind_speed), ws_sd = sd(wind_speed))
 
-
-
-
-
+write.xlsx(Gas_tibble,"Gas_tibble.xlsx")
 
 
