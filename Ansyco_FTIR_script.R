@@ -193,6 +193,7 @@ anova(NH3_lm)
 
 ############### T-test ########################
 p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,Messstelle)
+
 gtsummary::tbl_summary(p_table, by = Messstelle, missing = "no") %>%
         add_p()
 
