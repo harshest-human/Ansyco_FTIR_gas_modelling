@@ -11,10 +11,9 @@ library(readxl)
 library(dplyr)
 library(openair)
 library(car)
-library(gtsummary)
 library(xlsx)
 library(ggpubr)
-library(stargazer)
+
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -131,7 +130,7 @@ NH3xheight
 
 
 ########### WIND_GRAPH ######################
-Wind_roses <- windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
+windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          breaks = c(0,1,2,4,6,12),
          auto.text = FALSE,
          paddle = FALSE,
@@ -146,8 +145,6 @@ Wind_roses <- windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction"
          key.position = "bottom",
          par.settings=list(axis.line=list(col="lightgray")),
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
-
-Wind_roses
 
 
 ########### GAS_CONCENTRATIONS_VS_WIND ############
@@ -178,23 +175,29 @@ CH4xwind
 NH3xwind
 
 
-########### Linear Modelling & ANOVA ############
+########### Linear Modelling ########################
 CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
 CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
 NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
 
-anova(CO2_lm)
-anova(CH4_lm)
-anova(NH3_lm)
+summary(CO2_lm)
+summary(CH4_lm)
+summary(NH3_lm)
 
-#stargazer(CO2_lm,CH4_lm,NH3_lm, type = "text")
+########## ANOVA & Multiple_comparison_test ###########
+FTIRxwindxDWD$Messstelle <-as.factor(FTIRxwindxDWD$Messstelle)
+FTIRxwindxDWD$height <-as.factor(FTIRxwindxDWD$height)
+CO2_aov <- aov(CO2~height*wd_cardinals, data=FTIRxwindxDWD)
+CH4_aov <- aov(CH4~height*wd_cardinals, data=FTIRxwindxDWD)
+NH3_aov <- aov(NH3~height*wd_cardinals, data=FTIRxwindxDWD)
 
+anova(CO2_aov)
+anova(CH4_aov)
+anova(NH3_aov)
 
-############### T-test ########################
-p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,Messstelle)
-
-gtsummary::tbl_summary(p_table, by = Messstelle, missing = "no") %>%
-        add_p()
+TukeyHSD(CO2_aov)
+TukeyHSD(CH4_aov)
+TukeyHSD(NH3_aov)
 
 
 ########### Mean & SD Tibble ##################
@@ -206,10 +209,14 @@ Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>%
 
 
 ########### Write table (dataframe.xlsx) ##################
+#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx", sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+#write.xlsx(Gas_tibble,"Gas_tibble.xlsx")
 
-write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx", sheetName = "Sheet1", 
-           col.names = TRUE, row.names = TRUE, append = FALSE)
 
+########## Multiple Comparison Test ###########
+#library(multcomp)
+#summary(glht(CO2_lm, mcp(height="Tukey")))
+#summary(glht(CH4_lm, mcp(height="Tukey")))
+#summary(glht(NH3_lm, mcp(height="Tukey")))
 
-write.xlsx(Gas_tibble,"Gas_tibble.xlsx")
 
