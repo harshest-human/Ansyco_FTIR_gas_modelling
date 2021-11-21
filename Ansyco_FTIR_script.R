@@ -180,12 +180,11 @@ NH3xwind
 
 ########### Linear Modelling & ANOVA ############
 CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
-anova(CO2_lm)
-
 CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
-anova(CH4_lm)
-
 NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
+
+anova(CO2_lm)
+anova(CH4_lm)
 anova(NH3_lm)
 
 #stargazer(CO2_lm,CH4_lm,NH3_lm, type = "text")
@@ -193,6 +192,7 @@ anova(NH3_lm)
 
 ############### T-test ########################
 p_table <- select(FTIRxwindxDWD,CO2,CH4,NH3,Messstelle)
+
 gtsummary::tbl_summary(p_table, by = Messstelle, missing = "no") %>%
         add_p()
 
