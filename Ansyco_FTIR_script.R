@@ -107,28 +107,6 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
 
-########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
-
-CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
-        ggtitle("CO2 at varying heights ")+
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot() + stat_compare_means(method = "t.test")
-
-CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
-        ggtitle("CH4 at varying heights ")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot() + stat_compare_means(method = "t.test")
-
-NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
-        ggtitle("NH3 at varying heights ")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_boxplot() + stat_compare_means(method = "t.test")
-
-CO2xheight
-CH4xheight
-NH3xheight
-
-
 ########### WIND_GRAPH ######################
 windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          breaks = c(0,1,2,4,6,12),
@@ -147,20 +125,41 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
+########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
+CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
+        ggtitle("CO2 at varying heights ")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_boxplot()
+
+CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
+        ggtitle("CH4 at varying heights ")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_boxplot()
+
+NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
+        ggtitle("NH3 at varying heights ")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
+        geom_boxplot()
+
+CO2xheight
+CH4xheight
+NH3xheight
+
+
 ########### GAS_CONCENTRATIONS_VS_WIND ############
 CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y=CO2,col=wd_cardinals))+ 
         geom_boxplot() + 
         ggtitle("CO2 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(0,1400, by = 100)) +
-        geom_smooth(method = "lm")
+        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
 
 CH4xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= CH4,col=wd_cardinals))+ 
         geom_boxplot() + 
         ggtitle("CH4 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(10,100, by = 10))+
-        geom_smooth(method = "lm")
+        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
 
 
 NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinals))+
@@ -168,7 +167,7 @@ NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinal
         ggtitle("NH3 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(0, 10, by = 0.5))+
-        geom_smooth(method = "lm")
+        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
 
 CO2xwind
 CH4xwind
@@ -200,17 +199,8 @@ TukeyHSD(CH4_aov)
 TukeyHSD(NH3_aov)
 
 
-########### Mean & SD Tibble ##################
-Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>% 
-        summarise(CO2_mean=mean(CO2), CO2_sd=sd(CO2), 
-                  CH4_mean=mean(CH4), CH4_sd=sd(CH4),
-                  NH3_mean=mean(NH3), NH3_sd=sd(NH3),
-                  ws_mean = mean(wind_speed), ws_sd = sd(wind_speed))
-
-
 ########### Write table (dataframe.xlsx) ##################
-#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx", sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-#write.xlsx(Gas_tibble,"Gas_tibble.xlsx")
+#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
 ########## Multiple Comparison Test ###########
@@ -218,5 +208,12 @@ Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>%
 #summary(glht(CO2_lm, mcp(height="Tukey")))
 #summary(glht(CH4_lm, mcp(height="Tukey")))
 #summary(glht(NH3_lm, mcp(height="Tukey")))
+
+
+########### Mean & SD Tibble ##################
+#Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>% summarise(CO2_mean=mean(CO2), CO2_sd=sd(CO2),CH4_mean=mean(CH4), CH4_sd=sd(CH4),NH3_mean=mean(NH3), NH3_sd=sd(NH3), ws_mean = mean(wind_speed), ws_sd = sd(wind_speed))
+
+
+
 
 
