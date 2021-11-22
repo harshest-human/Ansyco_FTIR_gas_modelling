@@ -129,17 +129,18 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
         ggtitle("CO2 at varying heights ")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()
+        geom_boxplot()+ stat_compare_means(method = "t.test")
 
 CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
         ggtitle("CH4 at varying heights ")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()
+        geom_boxplot()+ stat_compare_means(method = "t.test")
 
 NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
         ggtitle("NH3 at varying heights ")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_boxplot()
+        geom_boxplot()+ stat_compare_means(method = "t.test")
+
 
 CO2xheight
 CH4xheight
@@ -151,15 +152,15 @@ CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y=CO2,col=wd_cardinals)
         geom_boxplot() + 
         ggtitle("CO2 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind_cardinal")+
-        scale_y_continuous(breaks = seq(0,1400, by = 100)) +
-        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
+        scale_y_continuous(breaks = seq(0,1400, by = 100))+
+        geom_smooth(method = "lm")
 
 CH4xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= CH4,col=wd_cardinals))+ 
         geom_boxplot() + 
         ggtitle("CH4 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(10,100, by = 10))+
-        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
+        geom_smooth(method = "lm")
 
 
 NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinals))+
@@ -167,7 +168,7 @@ NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinal
         ggtitle("NH3 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind_cardinal")+
         scale_y_continuous(breaks = seq(0, 10, by = 0.5))+
-        geom_smooth(method = "lm")+ stat_compare_means(method = "t.test")
+        geom_smooth(method = "lm")
 
 CO2xwind
 CH4xwind
@@ -183,7 +184,7 @@ summary(CO2_lm)
 summary(CH4_lm)
 summary(NH3_lm)
 
-########## ANOVA & Multiple_comparison_test ###########
+############## ANOVA  ###############################
 FTIRxwindxDWD$Messstelle <-as.factor(FTIRxwindxDWD$Messstelle)
 FTIRxwindxDWD$height <-as.factor(FTIRxwindxDWD$height)
 CO2_aov <- aov(CO2~height*wd_cardinals, data=FTIRxwindxDWD)
@@ -194,26 +195,30 @@ anova(CO2_aov)
 anova(CH4_aov)
 anova(NH3_aov)
 
-TukeyHSD(CO2_aov)
-TukeyHSD(CH4_aov)
-TukeyHSD(NH3_aov)
+########### Multiple_comparison_test ################
+CO2_MCT <- TukeyHSD(CO2_aov)
+CH4_MCT <- TukeyHSD(CH4_aov)
+NH3_MCT <- TukeyHSD(NH3_aov)
+
+ # height wise
+CO2xheight_MCT <- as.data.frame(CO2_MCT["height"])
+CH4xheight_MCT <- as.data.frame(CH4_MCT["height"])
+NH3xheight_MCT <- as.data.frame(CH4_MCT["height"])
+write.xlsx(CO2_MCT["height"], 'CO2xheight_MCT.xlsx')
+write.xlsx(CH4_MCT["height"], 'CH4xheight_MCT.xlsx')
+write.xlsx(NH3_MCT["height"], 'NH34xheight_MCT.xlsx')
+
+# wd_cardinal wise
+CO2xwind_MCT <- as.data.frame(NH3_MCT["wd_cardinals"])
+CH4xwind_MCT <- as.data.frame(CH4_MCT["wd_cardinals"])
+NH3xwind_MCT <- as.data.frame(NH3_MCT["wd_cardinals"])
+write.xlsx(CO2_MCT["height"], 'CO2xwd_cardinals_MCT.xlsx')
+write.xlsx(CH4_MCT["height"], 'CH4xwd_cardinals_MCT.xlsx')
+write.xlsx(NH3_MCT["height"], 'NH3xwd_cardinals_MCT.xlsx')
 
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-
-
-########## Multiple Comparison Test ###########
-#library(multcomp)
-#summary(glht(CO2_lm, mcp(height="Tukey")))
-#summary(glht(CH4_lm, mcp(height="Tukey")))
-#summary(glht(NH3_lm, mcp(height="Tukey")))
-
-
-########### Mean & SD Tibble ##################
-#Gas_tibble <- FTIRxwindxDWD %>% group_by(height) %>% summarise(CO2_mean=mean(CO2), CO2_sd=sd(CO2),CH4_mean=mean(CH4), CH4_sd=sd(CH4),NH3_mean=mean(NH3), NH3_sd=sd(NH3), ws_mean = mean(wind_speed), ws_sd = sd(wind_speed))
-
-
 
 
 
