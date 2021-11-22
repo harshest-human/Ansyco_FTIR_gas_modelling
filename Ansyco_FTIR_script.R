@@ -13,7 +13,7 @@ library(openair)
 library(car)
 library(xlsx)
 library(ggpubr)
-
+library(outliers)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -106,6 +106,11 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
+ #Remove Outliers
+Remove_outliers_function <- source("remove_outliers_function.R")
+FTIRxwindxDWD$CO2 <- remove_outliers(FTIRxwindxDWD$CO2)
+FTIRxwindxDWD$CH4 <- remove_outliers(FTIRxwindxDWD$CH4)
+FTIRxwindxDWD$NH3 <- remove_outliers(FTIRxwindxDWD$NH3)
 
 ########### WIND_GRAPH ######################
 windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
@@ -127,17 +132,17 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
-        ggtitle("CO2 at varying heights ")+
+        ggtitle("CO2 at varying heights")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_boxplot()+ stat_compare_means(method = "t.test")
 
 CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
-        ggtitle("CH4 at varying heights ")+
+        ggtitle("CH4 at varying heights")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_boxplot()+ stat_compare_means(method = "t.test")
 
 NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
-        ggtitle("NH3 at varying heights ")+
+        ggtitle("NH3 at varying heights")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
         geom_boxplot()+ stat_compare_means(method = "t.test")
 
@@ -219,6 +224,5 @@ write.xlsx(NH3_MCT["height"], 'NH3xwd_cardinals_MCT.xlsx')
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-
 
 
