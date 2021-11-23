@@ -140,17 +140,17 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CO2))+ 
         ggtitle("CO2 at varying heights")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm")
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CH4))+ 
         ggtitle("CH4 at varying heights")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm")
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=NH3))+ 
         ggtitle("NH3 at varying heights")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm")
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 CO2xheight
 CH4xheight
@@ -160,17 +160,17 @@ NH3xheight
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
         ggtitle("CO2 at varying heights")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "t.test")
+        geom_boxplot()+ stat_compare_means(method = "anova")
 
 CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
         ggtitle("CH4 at varying heights")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "t.test")
+        geom_boxplot()+ stat_compare_means(method = "anova")
 
 NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
         ggtitle("NH3 at varying heights")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "t.test")
+        geom_boxplot()+ stat_compare_means(method = "anova")
 
 
 CO2xheight
@@ -183,23 +183,20 @@ CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y=CO2,col=wd_cardinals)
         geom_boxplot() + 
         ggtitle("CO2 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind_cardinal")+
-        scale_y_continuous(breaks = seq(0,1400, by = 100))+
-        geom_smooth(method = "lm")
+        scale_y_continuous(breaks = seq(0,1400, by = 100))
 
 CH4xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= CH4,col=wd_cardinals))+ 
         geom_boxplot() + 
         ggtitle("CH4 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind_cardinal")+
-        scale_y_continuous(breaks = seq(10,100, by = 10))+
-        geom_smooth(method = "lm")
+        scale_y_continuous(breaks = seq(10,100, by = 10))
 
 
 NH3xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y= NH3,col= wd_cardinals))+
         geom_boxplot()+
         ggtitle("NH3 at varying heights and wind directions")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind_cardinal")+
-        scale_y_continuous(breaks = seq(0, 10, by = 0.5))+
-        geom_smooth(method = "lm")
+        scale_y_continuous(breaks = seq(0, 10, by = 0.5))
 
 CO2xwind
 CH4xwind
