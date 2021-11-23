@@ -14,6 +14,7 @@ library(car)
 library(xlsx)
 library(ggpubr)
 library(outliers)
+library(gtsummary)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -51,6 +52,7 @@ FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
 FTIR_input <- select(FTIR_input, 
                      DateTime_FI3min,Pipe,Messstelle,height,CO2,CH4,NH3) %>% 
         convert(fct(Pipe)) %>% na.omit()
+
 
 
 ########### WIND & DWD DATA IMPORT ########
@@ -106,6 +108,10 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
+Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Pipe,-DateTime_FI3min,-wind_direction,-wind_speed) 
+Final_summary %>% tbl_summary(by = wd_cardinals)
+
+
  #Remove Outliers
 Remove_outliers_function <- source("remove_outliers_function.R")
 FTIRxwindxDWD$CO2 <- remove_outliers(FTIRxwindxDWD$CO2)
@@ -131,6 +137,26 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
+CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CO2))+ 
+        ggtitle("CO2 at varying heights")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm")
+
+CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CH4))+ 
+        ggtitle("CH4 at varying heights")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm")
+
+NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=NH3))+ 
+        ggtitle("NH3 at varying heights")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm")
+
+CO2xheight
+CH4xheight
+NH3xheight
+
+
 CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
         ggtitle("CO2 at varying heights")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
@@ -208,21 +234,25 @@ NH3_MCT <- TukeyHSD(NH3_aov)
  # height wise
 CO2xheight_MCT <- as.data.frame(CO2_MCT["height"])
 CH4xheight_MCT <- as.data.frame(CH4_MCT["height"])
-NH3xheight_MCT <- as.data.frame(CH4_MCT["height"])
+NH3xheight_MCT <- as.data.frame(NH3_MCT["height"])
 write.xlsx(CO2_MCT["height"], 'CO2xheight_MCT.xlsx')
 write.xlsx(CH4_MCT["height"], 'CH4xheight_MCT.xlsx')
 write.xlsx(NH3_MCT["height"], 'NH34xheight_MCT.xlsx')
 
 # wd_cardinal wise
-CO2xwind_MCT <- as.data.frame(NH3_MCT["wd_cardinals"])
+CO2xwind_MCT <- as.data.frame(CO2_MCT["wd_cardinals"])
 CH4xwind_MCT <- as.data.frame(CH4_MCT["wd_cardinals"])
 NH3xwind_MCT <- as.data.frame(NH3_MCT["wd_cardinals"])
 write.xlsx(CO2_MCT["height"], 'CO2xwd_cardinals_MCT.xlsx')
 write.xlsx(CH4_MCT["height"], 'CH4xwd_cardinals_MCT.xlsx')
 write.xlsx(NH3_MCT["height"], 'NH3xwd_cardinals_MCT.xlsx')
 
-
+CO2xheight_MCT
+CH4xheight_MCT
+NH3xheight_MCT
+CO2xwind_MCT
+CH4xwind_MCT
+NH3xwind_MCT
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-
 
