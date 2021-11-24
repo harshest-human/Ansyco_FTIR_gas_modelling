@@ -240,9 +240,9 @@ write.xlsx(NH3_MCT["height"], 'NH34xheight_MCT.xlsx')
 CO2xwind_MCT <- as.data.frame(CO2_MCT["wd_cardinals"])
 CH4xwind_MCT <- as.data.frame(CH4_MCT["wd_cardinals"])
 NH3xwind_MCT <- as.data.frame(NH3_MCT["wd_cardinals"])
-write.xlsx(CO2_MCT["height"], 'CO2xwd_cardinals_MCT.xlsx')
-write.xlsx(CH4_MCT["height"], 'CH4xwd_cardinals_MCT.xlsx')
-write.xlsx(NH3_MCT["height"], 'NH3xwd_cardinals_MCT.xlsx')
+write.xlsx(CO2_MCT["wd_cardinals"], 'CO2xwd_cardinals_MCT.xlsx')
+write.xlsx(CH4_MCT["wd_cardinals"], 'CH4xwd_cardinals_MCT.xlsx')
+write.xlsx(NH3_MCT["wd_cardinals"], 'NH3xwd_cardinals_MCT.xlsx')
 
 CO2xheight_MCT
 CH4xheight_MCT
