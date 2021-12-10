@@ -17,7 +17,7 @@ library(outliers)
 library(gtsummary)
 
 ########### FTIR DATA IMPORT ###############
-FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
+FTIR_input <- read.table(paste0("20210902_Vertical_pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
         mutate(DateTime = paste(Datum, " ", Zeit)) %>%
         relocate(DateTime)
 
@@ -35,9 +35,9 @@ FTIR_input$height[as.numeric(FTIR_input$Messstelle)==10] = "1.80"
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==11] = "2.40"
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==12] = "2.70"
 
- #Categorize Messstelle into Pipe_location
-FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)>=7]  = "SW Pipe"
-FTIR_input$Pipe[as.numeric(FTIR_input$Messstelle)<=6]  = "SE Pipe" 
+ #Categorize Messstelle into Samp_loc_location
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)>=7]  = "NE_outlet"
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)<=6]  = "NW_outlet" 
 
  #Manipulation of strings
 FTIR_input$height <- as.numeric(FTIR_input$height)
@@ -50,8 +50,8 @@ FTIR_input$DateTime_FI3min = round_date(FTIR_input$DateTime, "3 minutes")
 
  # FTIR Data Frame
 FTIR_input <- select(FTIR_input, 
-                     DateTime_FI3min,Pipe,Messstelle,height,CO2,CH4,NH3) %>% 
-        convert(fct(Pipe)) %>% na.omit()
+                     DateTime_FI3min,Samp_loc,Messstelle,height,CO2,CH4,NH3) %>% 
+        convert(fct(Samp_loc)) %>% na.omit()
 
 
 
@@ -63,7 +63,7 @@ DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
  
  #FTIR+WIND 
 FTIR_02SEP_06OCT <- select(FTIR_input, 
-                           DateTime_FI3min,Pipe,Messstelle,height,CO2,CH4,NH3)%>% 
+                           DateTime_FI3min,Samp_loc,Messstelle,height,CO2,CH4,NH3)%>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:42:00"),
                DateTime_FI3min <= ymd_hms("2021-10-06 11:21:00"))
 FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input, 
@@ -71,7 +71,7 @@ FTIRxwind <- left_join(FTIR_02SEP_06OCT, wind_input,
 
  #FTIR+DWD
 FTIR_06OCT_06NOV <- select(FTIR_input, 
-                           DateTime_FI3min,Pipe,Messstelle,height,CO2,CH4,NH3)%>% 
+                           DateTime_FI3min,Samp_loc,Messstelle,height,CO2,CH4,NH3)%>% 
         filter(DateTime_FI3min >= ymd_hms("2021-10-06 11:24:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:21:00"))
 FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input, 
@@ -83,32 +83,32 @@ FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
  #Integration of 16 wind_cardinals
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "North"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "Northwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "Northwest"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "E"]  = "East"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "East"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "East"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "Northeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "Southeast"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "S"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "South"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "Southeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "Southeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "Southwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "Southwest"
 FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "W"]  = "West"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "West"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "West"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "Northwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "Northwest"
 
  #Final Dataframe
 FTIRxwindxDWD <- select(FTIRxwindxDWD,
-                        DateTime_FI3min,Pipe,Messstelle,
+                        DateTime_FI3min,Samp_loc,Messstelle,
                         height,CO2,CH4,NH3,
                         wind_direction,wind_speed,
                         wd_cardinals,-wd_cardinal) %>% 
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
-Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Pipe,-DateTime_FI3min,-wind_direction,-wind_speed) 
+Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
 Final_summary %>% tbl_summary(by = wd_cardinals)
 
 
@@ -136,48 +136,6 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
-########### GAS_CONCENTRATIONS_VS_HEIGHTS ##############
-CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CO2))+ 
-        ggtitle("CO2 at varying heights")+
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
-
-CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=CH4))+ 
-        ggtitle("CH4 at varying heights")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
-
-NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.numeric(height), y=NH3))+ 
-        ggtitle("NH3 at varying heights")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
-
-CO2xheight
-CH4xheight
-NH3xheight
-
-
-CO2xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CO2, fill=(as.factor(Pipe))))+ 
-        ggtitle("CO2 at varying heights")+
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "anova")
-
-CH4xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=CH4, fill=(as.factor(Pipe))))+ 
-        ggtitle("CH4 at varying heights")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "anova")
-
-NH3xheight <- ggplot(FTIRxwindxDWD, aes(x=as.factor(height), y=NH3, fill=(as.factor(Pipe))))+ 
-        ggtitle("NH3 at varying heights")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Line")+
-        geom_boxplot()+ stat_compare_means(method = "anova")
-
-
-CO2xheight
-CH4xheight
-NH3xheight
-
-
 ########### GAS_CONCENTRATIONS_VS_WIND ############
 CO2xwind <- ggplot(FTIRxwindxDWD,aes(x=as.factor(height),y=CO2,col=wd_cardinals))+ 
         geom_boxplot() + 
@@ -203,21 +161,69 @@ CH4xwind
 NH3xwind
 
 
+########### GAS_CONCENTRATIONS_VS_HEIGHTS_SW ##############
+FTIR_south_west <- FTIRxwindxDWD %>% filter(wd_cardinals == c("South","Southwest"))
+
+CO2xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CO2,fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CO2 at varying heights (South-Southwest)")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+CH4xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CH4 at varying heights (South-Southwest)")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+NH3xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
+        ggtitle("NH3 at varying heights (South-Southwest)")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+
+CO2xheightxSW
+CH4xheightxSW
+NH3xheightxSW
+
+
+########### GAS_CONCENTRATIONS_VS_HEIGHTS_NE ##############
+FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("North","Northeast"))
+
+CO2xheightxNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CO2, fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CO2 at varying heights (North-Northeast)")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+CH4xheightxNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CH4 at varying heights (North-Northeast)")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+NH3xheightxNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
+        ggtitle("NH3 at varying heights (North-Northeast)")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
+        geom_boxplot()+ stat_compare_means(method = "anova")
+
+
+CO2xheightxNE
+CH4xheightxNE
+NH3xheightxNE
+
+
 ########### Linear Modelling ########################
-CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
-CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
-NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIRxwindxDWD)
+CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIR_south_west)
+CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIR_south_west)
+NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIR_south_west)
 
 summary(CO2_lm)
 summary(CH4_lm)
 summary(NH3_lm)
 
 ############## ANOVA  ###############################
-FTIRxwindxDWD$Messstelle <-as.factor(FTIRxwindxDWD$Messstelle)
-FTIRxwindxDWD$height <-as.factor(FTIRxwindxDWD$height)
-CO2_aov <- aov(CO2~height*wd_cardinals, data=FTIRxwindxDWD)
-CH4_aov <- aov(CH4~height*wd_cardinals, data=FTIRxwindxDWD)
-NH3_aov <- aov(NH3~height*wd_cardinals, data=FTIRxwindxDWD)
+FTIR_south_west$Messstelle <-as.factor(FTIR_south_west$Messstelle)
+FTIR_south_west$height <-as.factor(FTIR_south_west$height)
+CO2_aov <- aov(CO2~height*wd_cardinals, data=FTIR_south_west)
+CH4_aov <- aov(CH4~height*wd_cardinals, data=FTIR_south_west)
+NH3_aov <- aov(NH3~height*wd_cardinals, data=FTIR_south_west)
 
 anova(CO2_aov)
 anova(CH4_aov)
@@ -251,5 +257,5 @@ CO2xwind_MCT
 CH4xwind_MCT
 NH3xwind_MCT
 ########### Write table (dataframe.xlsx) ##################
-#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
