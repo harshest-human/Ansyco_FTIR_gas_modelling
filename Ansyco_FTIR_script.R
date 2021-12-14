@@ -36,8 +36,8 @@ FTIR_input$height[as.numeric(FTIR_input$Messstelle)==11] = "2.40"
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==12] = "2.70"
 
  #Categorize Messstelle into Samp_loc_location
-FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)>=7]  = "NE_outlet"
-FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)<=6]  = "NW_outlet" 
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)>=7]  = "Set-up 1"
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)<=6]  = "Set-up 2" 
 
  #Manipulation of strings
 FTIR_input$height <- as.numeric(FTIR_input$height)
@@ -221,6 +221,7 @@ summary(NH3_lm)
 ############## ANOVA  ###############################
 FTIR_south_west$Messstelle <-as.factor(FTIR_south_west$Messstelle)
 FTIR_south_west$height <-as.factor(FTIR_south_west$height)
+
 CO2_aov <- aov(CO2~height*wd_cardinals, data=FTIR_south_west)
 CH4_aov <- aov(CH4~height*wd_cardinals, data=FTIR_south_west)
 NH3_aov <- aov(NH3~height*wd_cardinals, data=FTIR_south_west)
@@ -240,7 +241,7 @@ CH4xheight_MCT <- as.data.frame(CH4_MCT["height"])
 NH3xheight_MCT <- as.data.frame(NH3_MCT["height"])
 write.xlsx(CO2_MCT["height"], 'CO2xheight_MCT.xlsx')
 write.xlsx(CH4_MCT["height"], 'CH4xheight_MCT.xlsx')
-write.xlsx(NH3_MCT["height"], 'NH34xheight_MCT.xlsx')
+write.xlsx(NH3_MCT["height"], 'NH3xheight_MCT.xlsx')
 
 # wd_cardinal wise
 CO2xwind_MCT <- as.data.frame(CO2_MCT["wd_cardinals"])
