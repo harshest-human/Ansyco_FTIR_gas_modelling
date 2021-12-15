@@ -148,11 +148,11 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS_SW ##############
 FTIR_south_west <- FTIRxwindxDWD %>% filter(wd_cardinals == c("South","Southwest"))
 
-CO2xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CO2,fill=(as.factor(Samp_loc))))+ 
+CO2xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height),y=CO2,fill=(as.factor(Samp_loc))))+ 
         ggtitle("CO2 at varying heights (South-Southwest)")+ 
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
         geom_boxplot()+ stat_compare_means(method = "anova")
-
+                                  
 CH4xheightxSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
         ggtitle("CH4 at varying heights (South-Southwest)")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
@@ -279,36 +279,46 @@ NH3_aov_2 <- aov(NH3~height, data=FTIR_south_west_SS2)
 anova(CO2_aov_2)
 anova(CH4_aov_2)
 anova(NH3_aov_2)
+########### Multiple_comparison_test_SS1 ################
+CO2_MCT_SS1 <- TukeyHSD(CO2_aov)
+CH4_MCT_SS1 <- TukeyHSD(CH4_aov)
+NH3_MCT_SS1 <- TukeyHSD(NH3_aov)
+
+CO2xheight_MCT_SS1 <- as.data.frame(CO2_MCT_SS1["height"])
+CH4xheight_MCT_SS1 <- as.data.frame(CH4_MCT_SS1["height"])
+NH3xheight_MCT_SS1 <- as.data.frame(NH3_MCT_SS1["height"])
+write.xlsx(CO2_MCT_SS1["height"], 'CO2xheight_MCT_SS1.xlsx')
+write.xlsx(CH4_MCT_SS1["height"], 'CH4xheight_MCT_SS1.xlsx')
+write.xlsx(NH3_MCT_SS1["height"], 'NH3xheight_MCT_SS1.xlsx')
 
 
-########### Multiple_comparison_test ################
-CO2_MCT <- TukeyHSD(CO2_aov_2)
-CH4_MCT <- TukeyHSD(CH4_aov_2)
-NH3_MCT <- TukeyHSD(NH3_aov_2)
-
-CO2xheight_MCT <- as.data.frame(CO2_MCT["height"])
-CH4xheight_MCT <- as.data.frame(CH4_MCT["height"])
-NH3xheight_MCT <- as.data.frame(NH3_MCT["height"])
-write.xlsx(CO2_MCT["height"], 'CO2xheight_MCT.xlsx')
-write.xlsx(CH4_MCT["height"], 'CH4xheight_MCT.xlsx')
-write.xlsx(NH3_MCT["height"], 'NH3xheight_MCT.xlsx')
+CO2xheight_MCT_SS1
+CH4xheight_MCT_SS1
+NH3xheight_MCT_SS1
 
 
-CO2xheight_MCT
-CH4xheight_MCT
-NH3xheight_MCT
+########### Multiple_comparison_test_SS2 ################
+CO2_MCT_SS2 <- TukeyHSD(CO2_aov_2)
+CH4_MCT_SS2 <- TukeyHSD(CH4_aov_2)
+NH3_MCT_SS2 <- TukeyHSD(NH3_aov_2)
+
+CO2xheight_MCT_SS2 <- as.data.frame(CO2_MCT_SS2["height"])
+CH4xheight_MCT_SS2 <- as.data.frame(CH4_MCT_SS2["height"])
+NH3xheight_MCT_SS2 <- as.data.frame(NH3_MCT_SS2["height"])
+write.xlsx(CO2_MCT_SS2["height"], 'CO2xheight_MCT_SS2.xlsx')
+write.xlsx(CH4_MCT_SS2["height"], 'CH4xheight_MCT_SS2.xlsx')
+write.xlsx(NH3_MCT_SS2["height"], 'NH3xheight_MCT_SS2.xlsx')
+
+
+CO2xheight_MCT_SS2
+CH4xheight_MCT_SS2
+NH3xheight_MCT_SS2
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
-#1 top, mid, bottom
-
-#2 separate SW upwind & NE upwind ANOVA
-
-#3 separate SW upwind & NE upwind MCT
-
-#4 wind speed influence DONE
+# top, mid, bottom
 
 
 
