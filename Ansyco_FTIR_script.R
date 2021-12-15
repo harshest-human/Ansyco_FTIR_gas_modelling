@@ -318,7 +318,7 @@ NH3xheight_MCT_SS2
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
-# top, mid, bottom
+#1 top, mid, bottom
 
 
 
