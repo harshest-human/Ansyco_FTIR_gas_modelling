@@ -140,13 +140,11 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
-########### filter wind direction_S-SW | SS1_NW & SS2_NE ############
+########### filter wind direction S-SW & N-NE | SS1_NW & SS2_NE ############
+FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("North","Northeast"))
 FTIR_south_west <- FTIRxwindxDWD %>% filter(wd_cardinals == c("South","Southwest"))
 FTIR_south_west_SS1 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 1")
 FTIR_south_west_SS2 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 2")
-
-########### filter wind direction_N-NE | SS1_NW & SS2_NE ############
-FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("North","Northeast"))
 
 
 ########### GAS_CONCENTRATIONS_VS_HEIGHTS_SW ##############
