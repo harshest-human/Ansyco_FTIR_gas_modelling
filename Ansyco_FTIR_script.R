@@ -155,7 +155,6 @@ CO2xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height),y=CO2,fill=(as
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova")
         
-
 CH4xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
         ggtitle("CH4 at varying heights (South-Southwest)")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
@@ -270,22 +269,45 @@ CH4xwind_SS2
 NH3xwind_SS2
 
 
-########### Linear Modelling ########################
-CO2_lm <- lm(CO2~height, data=FTIR_south_west_SS1)
-CH4_lm <- lm(CH4~height, data=FTIR_south_west_SS1)
-NH3_lm <- lm(NH3~height, data=FTIR_south_west_SS1)
+########### Linear_Modelling_SS1########################
+summary(lm(CO2~height, data=FTIR_south_west_SS1))
+ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CO2))+ 
+        ggtitle("CO2 at varying heights")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
-summary(CO2_lm)
-summary(CH4_lm)
-summary(NH3_lm)
+summary(lm(CH4~height, data=FTIR_south_west_SS1))
+ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CH4))+ 
+        ggtitle("CH4 at varying heights")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
-CO2_lm <- lm(CO2~Messstelle*wd_cardinals, data=FTIR_south_west)
-CH4_lm <- lm(CH4~Messstelle*wd_cardinals, data=FTIR_south_west)
-NH3_lm <- lm(NH3~Messstelle*wd_cardinals, data=FTIR_south_west)
+summary(lm(NH3~height, data=FTIR_south_west_SS1))
+ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=NH3))+ 
+        ggtitle("NH3 at varying heights")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
-summary(CO2_lm)
-summary(CH4_lm)
-summary(NH3_lm)
+
+########### Linear_Modelling_SS2########################
+summary(lm(CO2~height, data=FTIR_south_west_SS2))
+ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CO2))+ 
+        ggtitle("CO2 at varying heights")+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
+
+summary(lm(CH4~height, data=FTIR_south_west_SS2))
+ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CH4))+ 
+        ggtitle("CH4 at varying heights")+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
+
+summary(lm(NH3~height, data=FTIR_south_west_SS2))
+ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=NH3))+ 
+        ggtitle("NH3 at varying heights")+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
+        geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
+
 
 ############## ANOVA  ###############################
 FTIR_south_west_SS1$height <-as.factor(FTIR_south_west_SS1$height)
