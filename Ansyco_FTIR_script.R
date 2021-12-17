@@ -153,7 +153,7 @@ CO2xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height),y=CO2,fill=(as
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova",size = 5,label="p.signif" )+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
         
 CH4xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
@@ -161,14 +161,16 @@ CH4xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 NH3xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
         ggtitle("NH3 at varying heights (South-Southwest)")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 
 CO2xheightxSSW
@@ -182,21 +184,24 @@ CO2xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CO2, fill=(
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 CH4xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
         ggtitle("CH4 at varying heights (North-Northeast)")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 NH3xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
         ggtitle("NH3 at varying heights (North-Northeast)")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 
 CO2xheightxNNE
@@ -212,7 +217,8 @@ CO2xwind_SS1 <- ggplot(FTIR_south_west,aes(x=as.factor(height),y=CO2,fill=as.fac
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
         
 CH4xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
@@ -221,7 +227,8 @@ CH4xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=CH4,fill= a
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 NH3xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
@@ -230,7 +237,8 @@ NH3xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=NH3,fill= a
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 CO2xwind_SS1
 CH4xwind_SS1
@@ -245,7 +253,8 @@ CO2xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CO2,fill= a
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 CH4xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
@@ -254,7 +263,8 @@ CH4xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CH4,fill= a
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 NH3xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
@@ -263,7 +273,8 @@ NH3xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=NH3,fill= a
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 CO2xwind_SS2
 CH4xwind_SS2
