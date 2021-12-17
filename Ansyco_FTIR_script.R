@@ -153,7 +153,8 @@ CO2xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height),y=CO2,fill=(as
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova")
+        stat_compare_means(method = "anova",size = 5,label="p.signif" )+
+        theme(text = element_text(size=16))
         
 CH4xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
         ggtitle("CH4 at varying heights (South-Southwest)")+
