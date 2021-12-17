@@ -378,10 +378,7 @@ NH3xheight_MCT_SS2
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-
 #Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
 #Final_summary %>% tbl_summary(by = wd_cardinals)
-
-#1 top, mid, bottom
 
 
