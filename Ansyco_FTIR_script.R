@@ -82,24 +82,27 @@ FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input,
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
 
  #Integration of 16 wind_cardinals
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "North"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "Northwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "Northwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "E"]  = "East"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "Northeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "Southeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "S"]  = "South"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "Southeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "Southeast"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "Southwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "Southwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "W"]  = "West"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "Northwest"
-FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "Northwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "N"]  = "Northern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NE"]  = "Northern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNE"]  = "Northern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ENE"]  = "Northern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NNW"]  = "Northern"
 
-#Integration of 4 wind_speeds
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "S"]  = "Southern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSE"]  = "Southern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SW"]  = "Southern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SSW"]  = "Southern"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WSW"]  = "Southern"
+
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "E"]  = "East"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "ESE"]  = "Southeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "SE"]  = "Southeast"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "W"]  = "West"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "NW"]  = "Northwest"
+FTIRxwindxDWD$wd_cardinals[as.character(FTIRxwindxDWD$wd_cardinal)== "WNW"]  = "Northwest"
+
+
+ #Integration of 4 wind_speeds
 FTIRxwindxDWD$wd_speed[as.character(FTIRxwindxDWD$wind_speed)> "0-5"]  = "low"
 FTIRxwindxDWD$wd_speed[as.character(FTIRxwindxDWD$wind_speed)> "5-14"]  = "high"
 
@@ -141,7 +144,7 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 
 ########### filter wind direction S-SW & N-NE | SS1_NW & SS2_NE ############
-FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("North","Northeast"))
+FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Northeast"))
 FTIR_south_west <- FTIRxwindxDWD %>% filter(wd_cardinals == c("South","Southwest"))
 FTIR_south_west_SS1 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 1")
 FTIR_south_west_SS2 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 2")
@@ -377,8 +380,22 @@ CH4xheight_MCT_SS2
 NH3xheight_MCT_SS2
 
 ########### Write table (dataframe.xlsx) ##################
-write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
 Final_summary %>% tbl_summary(by = wd_cardinals)
+
+
+
+
+
+FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
+CO2_SW_NE <- ggplot(FTIR_SW_NE, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("CO2 at varying heights")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
 
 
