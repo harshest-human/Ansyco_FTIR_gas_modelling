@@ -36,8 +36,8 @@ FTIR_input$height[as.numeric(FTIR_input$Messstelle)==11] = "2.40"
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==12] = "2.70"
 
  #Categorize Messstelle into Samp_loc_location
-FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)>=7]  = "Set-up 1"
-FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)<=6]  = "Set-up 2" 
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)>=7]  = "SS1"
+FTIR_input$Samp_loc[as.numeric(FTIR_input$Messstelle)<=6]  = "SS2" 
 
  #Manipulation of strings
 FTIR_input$height <- as.numeric(FTIR_input$height)
@@ -143,89 +143,146 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
          col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
-########### filter wind direction S-SW & N-NE | SS1_NW & SS2_NE ############
-FTIR_north_east <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Northeast"))
-FTIR_south_west <- FTIRxwindxDWD %>% filter(wd_cardinals == c("South","Southwest"))
-FTIR_south_west_SS1 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 1")
-FTIR_south_west_SS2 <- FTIR_south_west %>% filter(Samp_loc == "Set-up 2")
-
-
-########### GAS_CONCENTRATIONS_VS_HEIGHTS_SW ##############
-CO2xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height),y=CO2,fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CO2 at varying heights (South-Southwest)")+ 
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
+########### Gas_concentrations ~ height ##################
+anova(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CO2,))+ 
+        ggtitle("CO2 at varying heights")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+
         stat_boxplot(geom='errorbar')+
-        geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
-        theme(text = element_text(size=16))
-        
-CH4xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CH4 at varying heights (South-Southwest)")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
+        geom_boxplot(outlier.shape = NA)
+
+anova(aov(CH4~height, data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CH4,))+ 
+        ggtitle("CH4 at varying heights")+ 
+        xlab("Height (m)") + ylab("CH4 (ppm)")+
         stat_boxplot(geom='errorbar')+
-        geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
-        theme(text = element_text(size=16))
+        geom_boxplot(outlier.shape = NA)
 
-NH3xheightxSSW <- ggplot(FTIR_south_west, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
-        ggtitle("NH3 at varying heights (South-Southwest)")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
+anova(aov(NH3~height, data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=NH3,))+ 
+        ggtitle("NH3 at varying heights")+ 
+        xlab("Height (m)") + ylab("NH3 (ppm)")+
         stat_boxplot(geom='errorbar')+
-        geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
-        theme(text = element_text(size=16))
+        geom_boxplot(outlier.shape = NA)
 
 
-CO2xheightxSSW
-CH4xheightxSSW
-NH3xheightxSSW
-
-
-########### GAS_CONCENTRATIONS_VS_HEIGHTS_NE ##############
-CO2xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CO2, fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CO2 at varying heights (North-Northeast)")+
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Location")+
+########### Gas_concentrations ~ height * sampling_setup ##################
+anova(aov(CO2~height*Samp_loc, data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CO2,fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CO2 at varying heights")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-CH4xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=CH4, fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CH4 at varying heights (North-Northeast)")+
-        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Location")+
+anova(aov(CH4~height*Samp_loc, data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CH4,fill=(as.factor(Samp_loc))))+ 
+        ggtitle("CH4 at varying heights")+ 
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-NH3xheightxNNE <- ggplot(FTIR_north_east, aes(x=as.factor(height), y=NH3, fill=(as.factor(Samp_loc))))+ 
-        ggtitle("NH3 at varying heights (North-Northeast)")+
-        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill= "Sampling_Location")+
+anova(aov(NH3~height*Samp_loc, data=FTIRxwindxDWD))
+ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=NH3,fill=(as.factor(Samp_loc))))+ 
+        ggtitle("NH3 at varying heights")+ 
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
 
-CO2xheightxNNE
-CH4xheightxNNE
-NH3xheightxNNE
+########### Gas_concentrations ~ height * SS1 * wind_directions ##################
+FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
+
+FTIR_SW_NE_SS1 <- FTIR_SW_NE %>% filter(Samp_loc == "SS1")
+
+anova(aov(CO2~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("CO2 at varying heights SS1")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#D36069","#F5AAB0"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
+anova(aov(CH4~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CH4,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("CH4 at varying heights SS1")+ 
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#D36069","#F5AAB0"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
+anova(aov(NH3~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=NH3,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("NH3 at varying heights SS1")+ 
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#D36069","#F5AAB0"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
 
 
-########### GAS_CONCENTRATIONS_VS_WIND_SPEED_SW_SS1 ############
-CO2xwind_SS1 <- ggplot(FTIR_south_west,aes(x=as.factor(height),y=CO2,fill=as.factor(wd_speed)))+ 
+########### Gas_concentrations ~ height * SS2 * wind_directions ##################
+FTIR_SW_NE_SS2 <- FTIR_SW_NE %>% filter(Samp_loc == "SS2")
+
+anova(aov(CO2~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+ggplot(FTIR_SW_NE_SS2, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("CO2 at varying heights SS2")+ 
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
+anova(aov(CH4~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+ggplot(FTIR_SW_NE_SS2, aes(x=as.factor(height),y=CH4,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("CH4 at varying heights SS2")+ 
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
+anova(aov(NH3~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+ggplot(FTIR_SW_NE_SS2, aes(x=as.factor(height),y=NH3,fill=(as.factor(wd_cardinals))))+ 
+        ggtitle("NH3 at varying heights SS2")+ 
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Windward")+ 
+        scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
+        stat_boxplot(geom='errorbar')+
+        geom_boxplot(outlier.shape = NA)+
+        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
+        theme(text = element_text(size=16))
+
+
+########### Gas_concentrations ~ height * SS1 * wind_speeds ############
+FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
+
+anova(aov(CO2~height*wd_speed, data=FTIR_SW_SS1))
+ggplot(FTIR_SW_NE_SS1,aes(x=as.factor(height),y=CO2,fill=as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("CO2 at varying heights and wind speeds (South-Southwest) SS1")+
+        ggtitle("CO2 at varying heights and wind speeds (Southern) SS1")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
-        
-CH4xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
+
+anova(aov(CH4~height*wd_speed, data=FTIR_SW_SS1))       
+ggplot(FTIR_SW_SS1,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("CH4 at varying heights and wind speeds (South-Southwest) SS1")+
+        ggtitle("CH4 at varying heights and wind speeds (Southern) SS1")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
@@ -233,9 +290,10 @@ CH4xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=CH4,fill= a
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-NH3xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
+anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS1))
+ggplot(FTIR_SW_SS1,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("NH3 at varying heights and wind speeds (South-Southwest) SS1")+
+        ggtitle("NH3 at varying heights and wind speeds (Southern) SS1")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#D36069","#F5AAB0"))+
         stat_boxplot(geom='errorbar')+
@@ -243,15 +301,14 @@ NH3xwind_SS1 <- ggplot(FTIR_south_west_SS1,aes(x=as.factor(height),y=NH3,fill= a
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-CO2xwind_SS1
-CH4xwind_SS1
-NH3xwind_SS1
 
+########### Gas_concentrations ~ height * SS2 * wind_speeds ##############
+FTIR_SW_SS2<- FTIR_SW_NE_SS2 %>% filter(wd_cardinals == "Southern")
 
-########### GAS_CONCENTRATIONS_VS_WIND_SPEED_SW_SS2 ############
-CO2xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CO2,fill= as.factor(wd_speed)))+ 
+anova(aov(CO2~height*wd_speed, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2,aes(x=as.factor(height),y=CO2,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("CO2 at varying heights and wind speeds (South-Southwest) SS2")+
+        ggtitle("CO2 at varying heights and wind speeds (Southern) SS2")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
@@ -259,9 +316,10 @@ CO2xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CO2,fill= a
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-CH4xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
+anova(aov(CH4~height*wd_speed, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2,aes(x=as.factor(height),y=CH4,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("CH4 at varying heights and wind speeds (South-Southwest) SS2")+
+        ggtitle("CH4 at varying heights and wind speeds (Southern) SS2")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
@@ -269,133 +327,60 @@ CH4xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=CH4,fill= a
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-NH3xwind_SS2 <- ggplot(FTIR_south_west_SS2,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
+anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2,aes(x=as.factor(height),y=NH3,fill= as.factor(wd_speed)))+ 
         geom_boxplot(outlier.shape = NA) + 
-        ggtitle("NH3 at varying heights and wind speeds (South-Southwest) SS2")+
+        ggtitle("NH3 at varying heights and wind speeds (Southern) SS2")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "wind speed")+ 
         scale_fill_manual(values=c("#2FA2A0","#A4EBEA"))+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
-
-CO2xwind_SS2
-CH4xwind_SS2
-NH3xwind_SS2
 
 
 ########### Linear_Modelling_SS1########################
-summary(lm(CO2~height, data=FTIR_south_west_SS1))
-ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CO2))+ 
+summary(lm(CO2~height, data=FTIR_SW_SS1))
+ggplot(FTIR_SW_SS1, aes(x=as.numeric(height), y=CO2))+ 
         ggtitle("CO2 at varying heights SS1")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
-summary(lm(CH4~height, data=FTIR_south_west_SS1))
-ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CH4))+ 
+summary(lm(CH4~height, data=FTIR_SW_SS1))
+ggplot(FTIR_SW_SS1, aes(x=as.numeric(height), y=CH4))+ 
         ggtitle("CH4 at varying heights SS1")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
-summary(lm(NH3~height, data=FTIR_south_west_SS1))
-ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=NH3))+ 
+summary(lm(NH3~height, data=FTIR_SW_SS1))
+ggplot(FTIR_SW_SS1, aes(x=as.numeric(height), y=NH3))+ 
         ggtitle("NH3 at varying heights SS1")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 
 ########### Linear_Modelling_SS2########################
-summary(lm(CO2~height, data=FTIR_south_west_SS2))
-ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CO2))+ 
-        ggtitle("CO2 at varying heights SS2")+
+summary(lm(CO2~height, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2, aes(x=as.numeric(height), y=CO2))+ 
+        ggtitle("CO2 at varying heights SS1")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
-summary(lm(CH4~height, data=FTIR_south_west_SS2))
-ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CH4))+ 
-        ggtitle("CH4 at varying heights SS2")+
+summary(lm(CH4~height, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2, aes(x=as.numeric(height), y=CH4))+ 
+        ggtitle("CH4 at varying heights SS1")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
-summary(lm(NH3~height, data=FTIR_south_west_SS2))
-ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=NH3))+ 
-        ggtitle("NH3 at varying heights SS2")+
+summary(lm(NH3~height, data=FTIR_SW_SS2))
+ggplot(FTIR_SW_SS2, aes(x=as.numeric(height), y=NH3))+ 
+        ggtitle("NH3 at varying heights SS1")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
 
-############## ANOVA  ###############################
-FTIR_south_west_SS1$height <-as.factor(FTIR_south_west_SS1$height)
-FTIR_south_west_SS2$height <-as.factor(FTIR_south_west_SS2$height)
-
-
-CO2_aov <- aov(CO2~height, data=FTIR_south_west_SS1)
-CH4_aov <- aov(CH4~height, data=FTIR_south_west_SS1)
-NH3_aov <- aov(NH3~height, data=FTIR_south_west_SS1)
-
-anova(CO2_aov)
-anova(CH4_aov)
-anova(NH3_aov)
-
-CO2_aov_2 <- aov(CO2~height, data=FTIR_south_west_SS2)
-CH4_aov_2 <- aov(CH4~height, data=FTIR_south_west_SS2)
-NH3_aov_2 <- aov(NH3~height, data=FTIR_south_west_SS2)
-
-anova(CO2_aov_2)
-anova(CH4_aov_2)
-anova(NH3_aov_2)
-########### Multiple_comparison_test_SS1 ################
-CO2_MCT_SS1 <- TukeyHSD(CO2_aov)
-CH4_MCT_SS1 <- TukeyHSD(CH4_aov)
-NH3_MCT_SS1 <- TukeyHSD(NH3_aov)
-
-CO2xheight_MCT_SS1 <- as.data.frame(CO2_MCT_SS1["height"])
-CH4xheight_MCT_SS1 <- as.data.frame(CH4_MCT_SS1["height"])
-NH3xheight_MCT_SS1 <- as.data.frame(NH3_MCT_SS1["height"])
-write.xlsx(CO2_MCT_SS1["height"], 'CO2xheight_MCT_SS1.xlsx')
-write.xlsx(CH4_MCT_SS1["height"], 'CH4xheight_MCT_SS1.xlsx')
-write.xlsx(NH3_MCT_SS1["height"], 'NH3xheight_MCT_SS1.xlsx')
-
-
-CO2xheight_MCT_SS1
-CH4xheight_MCT_SS1
-NH3xheight_MCT_SS1
-
-
-########### Multiple_comparison_test_SS2 ################
-CO2_MCT_SS2 <- TukeyHSD(CO2_aov_2)
-CH4_MCT_SS2 <- TukeyHSD(CH4_aov_2)
-NH3_MCT_SS2 <- TukeyHSD(NH3_aov_2)
-
-CO2xheight_MCT_SS2 <- as.data.frame(CO2_MCT_SS2["height"])
-CH4xheight_MCT_SS2 <- as.data.frame(CH4_MCT_SS2["height"])
-NH3xheight_MCT_SS2 <- as.data.frame(NH3_MCT_SS2["height"])
-write.xlsx(CO2_MCT_SS2["height"], 'CO2xheight_MCT_SS2.xlsx')
-write.xlsx(CH4_MCT_SS2["height"], 'CH4xheight_MCT_SS2.xlsx')
-write.xlsx(NH3_MCT_SS2["height"], 'NH3xheight_MCT_SS2.xlsx')
-
-
-CO2xheight_MCT_SS2
-CH4xheight_MCT_SS2
-NH3xheight_MCT_SS2
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
-Final_summary %>% tbl_summary(by = wd_cardinals)
-
-
-
-
-
-FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
-CO2_SW_NE <- ggplot(FTIR_SW_NE, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
-        ggtitle("CO2 at varying heights")+ 
-        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+
-        stat_boxplot(geom='errorbar')+
-        geom_boxplot(outlier.shape = NA)+
-        stat_compare_means(method = "anova",size = 5, color = "darkred",label="p.format")+
-        theme(text = element_text(size=16))
-
-
-
+#Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
+#Final_summary %>% tbl_summary(by = wd_cardinals)
