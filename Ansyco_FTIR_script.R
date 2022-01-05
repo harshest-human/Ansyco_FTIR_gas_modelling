@@ -284,19 +284,19 @@ NH3xwind_SS2
 ########### Linear_Modelling_SS1########################
 summary(lm(CO2~height, data=FTIR_south_west_SS1))
 ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CO2))+ 
-        ggtitle("CO2 at varying heights")+
+        ggtitle("CO2 at varying heights SS1")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 summary(lm(CH4~height, data=FTIR_south_west_SS1))
 ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=CH4))+ 
-        ggtitle("CH4 at varying heights")+
+        ggtitle("CH4 at varying heights SS1")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
 summary(lm(NH3~height, data=FTIR_south_west_SS1))
 ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=NH3))+ 
-        ggtitle("NH3 at varying heights")+
+        ggtitle("NH3 at varying heights SS1")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="red",fill="grey",se=TRUE)
 
@@ -304,19 +304,19 @@ ggplot(FTIR_south_west_SS1, aes(x=as.numeric(height), y=NH3))+
 ########### Linear_Modelling_SS2########################
 summary(lm(CO2~height, data=FTIR_south_west_SS2))
 ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CO2))+ 
-        ggtitle("CO2 at varying heights")+
+        ggtitle("CO2 at varying heights SS2")+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
 summary(lm(CH4~height, data=FTIR_south_west_SS2))
 ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=CH4))+ 
-        ggtitle("CH4 at varying heights")+
+        ggtitle("CH4 at varying heights SS2")+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
 summary(lm(NH3~height, data=FTIR_south_west_SS2))
 ggplot(FTIR_south_west_SS2, aes(x=as.numeric(height), y=NH3))+ 
-        ggtitle("NH3 at varying heights")+
+        ggtitle("NH3 at varying heights SS2")+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling_Line")+
         geom_point()+ geom_smooth(method = "lm",color="blue",fill="grey",se=TRUE)
 
@@ -377,8 +377,8 @@ CH4xheight_MCT_SS2
 NH3xheight_MCT_SS2
 
 ########### Write table (dataframe.xlsx) ##################
-#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-#Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
-#Final_summary %>% tbl_summary(by = wd_cardinals)
+write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
+Final_summary %>% tbl_summary(by = wd_cardinals)
 
 
