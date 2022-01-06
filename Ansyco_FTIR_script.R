@@ -382,8 +382,7 @@ ggplot(FTIR_SW_SS2, aes(x=as.numeric(height), y=NH3))+
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
-Final_summary %>% tbl_summary(by = wd_cardinals)
+#Final_summary <- select(FTIRxwindxDWD,-Messstelle,-Samp_loc,-DateTime_FI3min,-wind_direction,-wind_speed) 
+#Final_summary %>% tbl_summary(by = wd_cardinals)
 
-FTIRxwindxDWD %>% group_by(wd_cardinals) %>%
-        summarise(no_rows = length(NH3))
+#FTIRxwindxDWD %>% group_by(wd_cardinals) %> summarise(no_rows = length(NH3))
