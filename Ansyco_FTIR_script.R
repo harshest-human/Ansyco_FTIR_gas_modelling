@@ -170,27 +170,27 @@ ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=NH3,))+
 
 
 ########### Gas_concentrations ~ height * sampling_setup ##################
-anova(aov(CO2~height*Samp_loc, data=FTIRxwindxDWD))
+anova(aov(CO2~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+#TukeyHSD(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
 ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CO2,fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CO2 at varying heights")+ 
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 4, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-anova(aov(CH4~height*Samp_loc, data=FTIRxwindxDWD))
+anova(aov(CH4~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+#TukeyHSD(aov(CH4~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=CH4,fill=(as.factor(Samp_loc))))+ 
-        ggtitle("CH4 at varying heights")+ 
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
         stat_compare_means(method = "anova",size = 4, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-anova(aov(NH3~height*Samp_loc, data=FTIRxwindxDWD))
+anova(aov(NH3~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+#TukeyHSD(aov(NH3~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=NH3,fill=(as.factor(Samp_loc))))+ 
-        ggtitle("NH3 at varying heights")+ 
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Sampling Setup")+
         stat_boxplot(geom='errorbar')+
         geom_boxplot(outlier.shape = NA)+
@@ -198,12 +198,13 @@ ggplot(FTIRxwindxDWD, aes(x=as.factor(height),y=NH3,fill=(as.factor(Samp_loc))))
         theme(text = element_text(size=16))
 
 
+
 ########### Gas_concentrations ~ height * SS1 * wind_directions ##################
 FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
 
 FTIR_SW_NE_SS1 <- FTIR_SW_NE %>% filter(Samp_loc == "SS1")
 
-anova(aov(CO2~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
         ggtitle("CO2 at varying heights SS1")+ 
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+ 
@@ -213,7 +214,7 @@ ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinal
         stat_compare_means(method = "anova",size = 4, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-anova(aov(CH4~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+anova(aov(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CH4,fill=(as.factor(wd_cardinals))))+ 
         ggtitle("CH4 at varying heights SS1")+ 
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(fill = "Windward")+ 
@@ -223,7 +224,7 @@ ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=CH4,fill=(as.factor(wd_cardinal
         stat_compare_means(method = "anova",size = 4, color = "darkred",label="p.format")+
         theme(text = element_text(size=16))
 
-anova(aov(NH3~height*wd_cardinals, data=FTIR_SW_NE_SS1))
+anova(aov(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=NH3,fill=(as.factor(wd_cardinals))))+ 
         ggtitle("NH3 at varying heights SS1")+ 
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(fill = "Windward")+ 
@@ -237,7 +238,7 @@ ggplot(FTIR_SW_NE_SS1, aes(x=as.factor(height),y=NH3,fill=(as.factor(wd_cardinal
 ########### Gas_concentrations ~ height * SS2 * wind_directions ##################
 FTIR_SW_NE_SS2 <- FTIR_SW_NE %>% filter(Samp_loc == "SS2")
 
-anova(aov(CO2~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 ggplot(FTIR_SW_NE_SS2, aes(x=as.factor(height),y=CO2,fill=(as.factor(wd_cardinals))))+ 
         ggtitle("CO2 at varying heights SS2")+ 
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(fill = "Windward")+ 
