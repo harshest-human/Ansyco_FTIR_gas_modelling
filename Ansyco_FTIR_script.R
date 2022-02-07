@@ -15,6 +15,7 @@ library(xlsx)
 library(ggpubr)
 library(outliers)
 library(gtsummary)
+library(Rmisc) #to summarize and find confidence intervals
 
 ########### FTIR DATA IMPORT ###############
 FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
@@ -200,7 +201,6 @@ anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS2))
 
 
 ##################  STRATEGY1 ############################
-library(Rmisc) #to summarize and find confidence intervals
 FTIRxwindxDWD$height <-as.factor(FTIRxwindxDWD$height)
 
 strategy1_CO2 <- summarySE(FTIRxwindxDWD, measurevar="CO2", groupvars=c("height"),
@@ -385,3 +385,7 @@ summary(lm(NH3~height, data=FTIR_SW_SS2))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
 
+
+
+########## gg_line ###########
+#ggline(strategy2_CO2, x = "height", y = "CO2",color = "Samp_loc",na.rm = TRUE)+stat_compare_means(aes(group = Samp_loc), label = "p.format")+geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2)+geom_point(size=3)+theme_classic(base_size = 16)
