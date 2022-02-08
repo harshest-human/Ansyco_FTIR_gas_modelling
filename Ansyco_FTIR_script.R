@@ -329,12 +329,42 @@ ggplot(strategy3_SS2_NH3, aes(x=height, y=NH3, colour=wd_cardinals))+
         scale_colour_manual(values=c("#A4EBEA","#2FA2A0"))+
         theme_classic(base_size = 16)
 
+##################  STRATEGY4 SS1 ############################
+FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
 
-##################  STRATEGY4 ############################
+strategy4_SS1_CO2 <- summarySE(FTIR_SW_SS1, measurevar="CO2", groupvars=c("height","wd_speed"),
+                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+ggplot(strategy4_CO2, aes(x=height, y=CO2, colour=wd_speed))+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind Speed")+ 
+        geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
+        theme_classic(base_size = 16)
+
+strategy4_SS1_CH4 <- summarySE(FTIR_SW_SS1, measurevar="CH4", groupvars=c("height","wd_speed"),
+                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+ggplot(strategy4_CH4, aes(x=height, y=CH4, colour=wd_speed))+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind Speed")+ 
+        geom_errorbar(aes(ymin=CH4-ci, ymax=CH4+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
+        theme_classic(base_size = 16)
+
+strategy4_SS1_NH3 <- summarySE(FTIR_SW_SS1, measurevar="NH3", groupvars=c("height","wd_speed"),
+                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+ggplot(strategy4_NH3, aes(x=height, y=NH3, colour=wd_speed))+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind Speed")+ 
+        geom_errorbar(aes(ymin=NH3-ci, ymax=NH3+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#A4EBEA","#2FA2A0"))+
+        theme_classic(base_size = 16)
+
+
+##################  STRATEGY4 SS2############################
 FTIR_SW_SS2<- FTIR_SW_NE_SS2 %>% filter(wd_cardinals == "Southern")
+
 strategy4_CO2 <- summarySE(FTIR_SW_NE_SS2, measurevar="CO2", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy4_CO2, aes(x=height, y=CO2, colour=wd_speed))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind Speed")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
