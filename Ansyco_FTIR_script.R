@@ -145,34 +145,29 @@ windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
 
 
 ########### Gas_concentrations ~ height ##################
-aov(CO2~as.factor(height), data=FTIRxwindxDWD)
+anova(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
+TukeyHSD(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
+
 anova(aov(CH4~as.factor(height), data=FTIRxwindxDWD))
 TukeyHSD(aov(CH4~as.factor(height), data=FTIRxwindxDWD))
 
-TukeyHSD(aov(CH4~as.factor(height), data=FTIRxwindxDWD))
-
+anova(aov(NH3~as.factor(height), data=FTIRxwindxDWD))
 TukeyHSD(aov(NH3~as.factor(height), data=FTIRxwindxDWD))
 
 
 ########### Gas_concentrations ~ height * sampling_setup ##################
-FTIR_SS1all<- FTIRxwindxDWD %>% filter(Samp_loc == "SS1")
-anova(aov(CO2~as.factor(height), data=FTIR_SS1all))
-TukeyHSD(aov(CO2~as.factor(height), data=FTIR_SS1all))
-
+anova(aov(CO2~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 
 anova(aov(CH4~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 
-
 anova(aov(NH3~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
-
 
 
 ########### Gas_concentrations ~ height * SS1 * wind_directions ##################
 FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
 FTIR_SW_NE_SS1 <- FTIR_SW_NE %>% filter(Samp_loc == "SS1")
 
-anova(aov(CO2~as.factor(height), data=FTIR_SW_NE_SS1))
-TukeyHSD(aov(CO2~as.factor(height), data=FTIR_SW_NE_SS1))
+anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 
 anova(aov(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 
@@ -184,9 +179,19 @@ FTIR_SW_NE_SS2 <- FTIR_SW_NE %>% filter(Samp_loc == "SS2")
 
 anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 
-anova(aov(CH4~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+anova(aov(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 
-anova(aov(NH3~height*wd_cardinals, data=FTIR_SW_NE_SS2))
+anova(aov(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
+
+
+########### Gas_concentrations ~ height * SS2 * wind_speeds ##############
+FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
+
+anova(aov(CO2~height*wd_speed, data=FTIR_SW_SS1))
+
+anova(aov(CH4~height*wd_speed, data=FTIR_SW_SS1))
+
+anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS1))
 
 
 ########### Gas_concentrations ~ height * SS2 * wind_speeds ##############
@@ -229,6 +234,7 @@ ggplot(strategy1_NH3, aes(x=height, y=NH3))+
         xlab("Height (m)") + ylab("NH3 (ppm)")+
         geom_point(size=3)+ theme_classic(base_size = 16)
 
+
 ##################  STRATEGY2 ############################
 strategy2_CO2 <- summarySE(FTIRxwindxDWD, measurevar="CO2", groupvars=c("height","Samp_loc"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
@@ -258,12 +264,8 @@ ggplot(strategy2_NH3, aes(x=height, y=NH3, colour=Samp_loc))+
 FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
 FTIR_SW_NE_SS1 <- FTIR_SW_NE %>% filter(Samp_loc == "SS1")
 
-anova(aov(CO2~as.factor(height), data=FTIR_SW_NE_SS1))
-TukeyHSD(aov(CO2~as.factor(height), data=FTIR_SW_NE_SS1))
-
 strategy3_CO2 <- summarySE(FTIR_SW_NE_SS1, measurevar="CO2", groupvars=c("height","wd_cardinals"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_CO2, aes(x=height, y=CO2, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
@@ -274,7 +276,6 @@ ggplot(strategy3_CO2, aes(x=height, y=CO2, colour=wd_cardinals))+
 
 strategy3_CH4 <- summarySE(FTIR_SW_NE_SS1, measurevar="CH4", groupvars=c("height","wd_cardinals"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_CH4, aes(x=height, y=CH4, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=CH4-ci, ymax=CH4+ci), width=.2) +
@@ -285,7 +286,6 @@ ggplot(strategy3_CH4, aes(x=height, y=CH4, colour=wd_cardinals))+
 
 strategy3_NH3 <- summarySE(FTIR_SW_NE_SS1, measurevar="NH3", groupvars=c("height","wd_cardinals"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_NH3, aes(x=height, y=NH3, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=NH3-ci, ymax=NH3+ci), width=.2) +
@@ -299,7 +299,6 @@ FTIR_SW_NE_SS2 <- FTIR_SW_NE %>% filter(Samp_loc == "SS2")
 
 strategy3_SS2_CO2 <- summarySE(FTIR_SW_NE_SS2, measurevar="CO2", groupvars=c("height","wd_cardinals"),
                                na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_SS2_CO2, aes(x=height, y=CO2, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
@@ -310,7 +309,6 @@ ggplot(strategy3_SS2_CO2, aes(x=height, y=CO2, colour=wd_cardinals))+
 
 strategy3_SS2_CH4 <- summarySE(FTIR_SW_NE_SS2, measurevar="CH4", groupvars=c("height","wd_cardinals"),
                                na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_SS2_CH4, aes(x=height, y=CH4, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=CH4-ci, ymax=CH4+ci), width=.2) +
@@ -321,13 +319,13 @@ ggplot(strategy3_SS2_CH4, aes(x=height, y=CH4, colour=wd_cardinals))+
 
 strategy3_SS2_NH3 <- summarySE(FTIR_SW_NE_SS2, measurevar="NH3", groupvars=c("height","wd_cardinals"),
                                na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-
 ggplot(strategy3_SS2_NH3, aes(x=height, y=NH3, colour=wd_cardinals))+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Windward")+ 
         geom_errorbar(aes(ymin=NH3-ci, ymax=NH3+ci), width=.2) +
         geom_point(size=3)+ 
         scale_colour_manual(values=c("#A4EBEA","#2FA2A0"))+
         theme_classic(base_size = 16)
+
 
 ##################  STRATEGY4 SS1 ############################
 FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
@@ -356,7 +354,7 @@ ggplot(strategy4_NH3, aes(x=height, y=NH3, colour=wd_speed))+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind Speed")+ 
         geom_errorbar(aes(ymin=NH3-ci, ymax=NH3+ci), width=.2) +
         geom_point(size=3)+ 
-        scale_colour_manual(values=c("#A4EBEA","#2FA2A0"))+
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
         theme_classic(base_size = 16)
 
 
@@ -408,14 +406,12 @@ summary(lm(NH3~height, data=FTIR_SW_SS2))
 
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-#Final_summary <- select(FTIRxwindxDWD,height, CO2,CH4,NH3) 
-#Final_summary <- Final_summary %>% tbl_summary(by = CO2)
 
-#FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
+
+#FTIR_SW_NE_SS1 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
 
-
-
 ########## gg_line ###########
 #ggline(strategy2_CO2, x = "height", y = "CO2",color = "Samp_loc",na.rm = TRUE)+stat_compare_means(aes(group = Samp_loc), label = "p.format")+geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2)+geom_point(size=3)+theme_classic(base_size = 16)
+
