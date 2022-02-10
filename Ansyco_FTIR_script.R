@@ -162,25 +162,32 @@ TukeyHSD(aov(NH3~as.factor(height), data=FTIRxwindxDWD))
 ##################  MODELING STRATEGY 2 ############################
 summary(lm(CO2~height, data=FTIRxwindxDWD))
 anova(aov(CO2~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+compare_means(CO2~Samp_loc, data=FTIRxwindxDWD, group.by = "height", method = "t.test")
 
 summary(lm(CH4~height, data=FTIRxwindxDWD))
 anova(aov(CH4~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+compare_means(CH4~Samp_loc, data=FTIRxwindxDWD, group.by = "height", method = "t.test")
 
 summary(lm(CH4~height, data=FTIRxwindxDWD))
 anova(aov(NH3~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
+compare_means(NH3~Samp_loc, data=FTIRxwindxDWD, group.by = "height", method = "t.test")
 
 ##################  MODELING STRATEGY 3 SS1 #########################
 FTIR_SW_NE <- FTIRxwindxDWD %>% filter(wd_cardinals== c("Northern","Southern"))
 FTIR_SW_NE_SS1 <- FTIR_SW_NE %>% filter(Samp_loc == "SS1")
 
+
 summary(lm(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
+compare_means(CO2~wd_cardinals, data=FTIR_SW_NE_SS1, group.by = "height", method = "t.test")
 
 summary(lm(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 anova(aov(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
+compare_means(CH4~wd_cardinals, data=FTIR_SW_NE_SS1, group.by = "height", method = "t.test")
 
 summary(lm(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
 anova(aov(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS1))
+compare_means(NH3~wd_cardinals, data=FTIR_SW_NE_SS1, group.by = "height", method = "t.test")
 
 
 ##################  MODELING STRATEGY 3 SS2 #########################
@@ -189,38 +196,46 @@ FTIR_SW_NE_SS2 <- FTIR_SW_NE %>% filter(Samp_loc == "SS2")
 
 summary(lm(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 anova(aov(CO2~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
+compare_means(CO2~wd_cardinals, data=FTIR_SW_NE_SS2, group.by = "height", method = "t.test")
 
 summary(lm(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 anova(aov(CH4~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
+compare_means(CH4~wd_cardinals, data=FTIR_SW_NE_SS2, group.by = "height", method = "t.test")
 
 summary(lm(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
 anova(aov(NH3~as.factor(height)*as.factor(wd_cardinals), data=FTIR_SW_NE_SS2))
+compare_means(NH3~wd_cardinals, data=FTIR_SW_NE_SS2, group.by = "height", method = "t.test")
 
 
-##################  MODELING STRATEGY 3 SS1 #########################
+##################  MODELING STRATEGY 4 SS1 #########################
 FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
 
 summary(lm(CO2~height*wd_speed, data=FTIR_SW_SS1))
 anova(aov(CO2~height*wd_speed, data=FTIR_SW_SS1))
+compare_means(CO2~wd_speed, data=FTIR_SW_SS1, group.by = "height", method = "t.test")
 
 summary(lm(CH4~height*wd_speed, data=FTIR_SW_SS1))
 anova(aov(CH4~height*wd_speed, data=FTIR_SW_SS1))
+compare_means(CH4~wd_speed, data=FTIR_SW_SS1, group.by = "height", method = "t.test")
 
 summary(lm(NH3~height*wd_speed, data=FTIR_SW_SS1))
 anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS1))
+compare_means(NH3~wd_speed, data=FTIR_SW_SS1, group.by = "height", method = "t.test")
 
-
-##################  MODELING STRATEGY 3 SS2 #########################
+##################  MODELING STRATEGY 4 SS2 #########################
 FTIR_SW_SS2<- FTIR_SW_NE_SS2 %>% filter(wd_cardinals == "Southern")
 
 summary(lm(CO2~height*wd_speed, data=FTIR_SW_SS2))
 anova(aov(CO2~height*wd_speed, data=FTIR_SW_SS2))
+compare_means(CO2~wd_speed, data=FTIR_SW_SS2, group.by = "height", method = "t.test")
 
 summary(lm(CH4~height*wd_speed, data=FTIR_SW_SS2))
 anova(aov(CH4~height*wd_speed, data=FTIR_SW_SS2))
+compare_means(CH4~wd_speed, data=FTIR_SW_SS2, group.by = "height", method = "t.test")
 
 summary(lm(NH3~height*wd_speed, data=FTIR_SW_SS2))
 anova(aov(NH3~height*wd_speed, data=FTIR_SW_SS2))
+compare_means(NH3~wd_speed, data=FTIR_SW_SS2, group.by = "height", method = "t.test")
 
 
 ##################  GRAPH STRATEGY 1 ############################
@@ -461,6 +476,14 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
                          #method = "t.test",
                          #p.adjust.method = NULL), 
            #file="t.results.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+
+
+
+
+
+
+
+
 
 
 
