@@ -424,7 +424,6 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
 ########### Write table (dataframe.xlsx) ##################
 #write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
-
 #FTIR_SW_NE_SS1 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
@@ -439,7 +438,9 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
        #add = c("mean_se"),
        #size = 0.5,
        #color = "Samp_loc")+
-        #theme_classic(base_size = 15)
+        #theme_classic(base_size = 15)+
+        #stat_compare_means(aes(group = Samp_loc), hide.ns=T, label = "p.signif") 
+
 
 #ggline(FTIR_SW_NE_SS1, x="height", y="CO2", na.rm=TRUE,
        #add = c("mean_se"),
@@ -447,6 +448,19 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
        #palette = c("#F5AAB0","#D36069"))+
         #theme_classic(base_size = 15)
 
+
+
+
+
+
+
+##################### pairwise.test ########################
+
+#write.xlsx(compare_means(NH3~wd_speed, data=FTIR_SW_SS2,
+                         #group.by = "height",
+                         #method = "t.test",
+                         #p.adjust.method = NULL), 
+           #file="t.results.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
 
