@@ -374,7 +374,7 @@ FTIR_SW_SS1<- FTIR_SW_NE_SS1 %>% filter(wd_cardinals == "Southern")
 
 strategy4_SS1_CO2 <- summarySE(FTIR_SW_SS1, measurevar="CO2", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-ggplot(strategy4_CO2, aes(x=height, y=CO2, colour=wd_speed))+
+ggplot(strategy4_SS1_CO2, aes(x=height, y=CO2, colour=wd_speed))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind Speed")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
         geom_point(size=3)+ 
@@ -384,7 +384,7 @@ ggplot(strategy4_CO2, aes(x=height, y=CO2, colour=wd_speed))+
 
 strategy4_SS1_CH4 <- summarySE(FTIR_SW_SS1, measurevar="CH4", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
-ggplot(strategy4_CH4, aes(x=height, y=CH4, colour=wd_speed))+
+ggplot(strategy4_SS1_CH4, aes(x=height, y=CH4, colour=wd_speed))+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind Speed")+ 
         geom_errorbar(aes(ymin=CH4-ci, ymax=CH4+ci), width=.2) +
         geom_point(size=3)+ 
@@ -465,9 +465,52 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
 
 
 
+##############GRAPH 4 SS1 with ggline#############
+ggline(FTIR_SW_SS1, x="height", y="CO2", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
+
+ggline(FTIR_SW_SS1, x="height", y="CH4", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
 
 
+ggline(FTIR_SW_SS1, x="height", y="NH3", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
 
+
+##############GRAPH 4 SS2 with ggline#############
+ggline(FTIR_SW_SS2, x="height", y="CO2", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
+
+ggline(FTIR_SW_SS2, x="height", y="CH4", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
+
+
+ggline(FTIR_SW_SS2, x="height", y="NH3", na.rm=TRUE,
+       add = c("mean_se"),
+       size = 0.5,
+       color = "wd_speed")+
+        theme_classic(base_size = 15)+
+        stat_compare_means(aes(group = wd_speed), hide.ns=T, label = "p.format") 
 
 ##################### pairwise.test ########################
 
@@ -476,15 +519,4 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
                          #method = "t.test",
                          #p.adjust.method = NULL), 
            #file="t.results.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
-
-
-
-
-
-
-
-
-
-
-
 
