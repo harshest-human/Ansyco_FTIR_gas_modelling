@@ -442,7 +442,7 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
 
 #FTIR_SW_NE_SS1 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
-FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
+#FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
 
 ########## (alternative method) gg_line ###########
 #ggline(FTIRxwindxDWD, x="height", y="CO2", na.rm=TRUE, add="mean_se")+ 
