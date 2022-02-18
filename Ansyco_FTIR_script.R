@@ -271,7 +271,8 @@ ggplot(strategy1_NH3, aes(x=height, y=NH3))+
 
 ##################  GRAPH STRATEGY 2 ############################
 strategy2_CO2 <- summarySE(FTIRxwindxDWD, measurevar="CO2", groupvars=c("height","Samp_loc"),
-                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+                           na.rm = TRUE, conf.interval = 0.50, .drop = TRUE)
+
 ggplot(strategy2_CO2, aes(x=height, y=CO2, colour=Samp_loc))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Setup")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
