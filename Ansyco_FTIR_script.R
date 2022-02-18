@@ -271,7 +271,8 @@ ggplot(strategy1_NH3, aes(x=height, y=NH3))+
 
 ##################  GRAPH STRATEGY 2 ############################
 strategy2_CO2 <- summarySE(FTIRxwindxDWD, measurevar="CO2", groupvars=c("height","Samp_loc"),
-                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+                           na.rm = TRUE, conf.interval = 0.50, .drop = TRUE)
+
 ggplot(strategy2_CO2, aes(x=height, y=CO2, colour=Samp_loc))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Setup")+ 
         geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
@@ -406,7 +407,7 @@ ggplot(strategy4_SS1_NH3, aes(x=height, y=NH3, colour=wd_speed))+
 ##################  GRAPH STRATEGY 4 SS2############################
 FTIR_SW_SS2<- FTIR_SW_NE_SS2 %>% filter(wd_cardinals == "Southern")
 
-strategy4_SS2_CO2 <- summarySE(FTIR_SW_NE_SS2, measurevar="CO2", groupvars=c("height","wd_speed"),
+strategy4_SS2_CO2 <- summarySE(FTIR_SW_SS2, measurevar="CO2", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
 ggplot(strategy4_SS2_CO2, aes(x=height, y=CO2, colour=wd_speed))+
         xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Wind Speed")+ 
@@ -416,7 +417,7 @@ ggplot(strategy4_SS2_CO2, aes(x=height, y=CO2, colour=wd_speed))+
         theme_classic(base_size = 16)+
         geom_line(aes(group=wd_speed))+ geom_point()
 
-strategy4_SS2_CH4 <- summarySE(FTIR_SW_NE_SS2, measurevar="CH4", groupvars=c("height","wd_speed"),
+strategy4_SS2_CH4 <- summarySE(FTIR_SW_SS2, measurevar="CH4", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
 ggplot(strategy4_SS2_CH4, aes(x=height, y=CH4, colour=wd_speed))+
         xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Wind Speed")+ 
@@ -426,7 +427,7 @@ ggplot(strategy4_SS2_CH4, aes(x=height, y=CH4, colour=wd_speed))+
         theme_classic(base_size = 16)+
         geom_line(aes(group=wd_speed))+ geom_point()
 
-strategy4_SS2_NH3 <- summarySE(FTIR_SW_NE_SS2, measurevar="NH3", groupvars=c("height","wd_speed"),
+strategy4_SS2_NH3 <- summarySE(FTIR_SW_SS2, measurevar="NH3", groupvars=c("height","wd_speed"),
                            na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
 ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
         xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Wind Speed")+ 
@@ -441,7 +442,7 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
 
 #FTIR_SW_NE_SS1 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
-#FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
+FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(NH3 = mean(NH3, na.rm = TRUE))
 
 ########## (alternative method) gg_line ###########
 #ggline(FTIRxwindxDWD, x="height", y="CO2", na.rm=TRUE, add="mean_se")+ 
@@ -519,4 +520,5 @@ ggline(FTIR_SW_SS2, x="height", y="NH3", na.rm=TRUE,
                          #method = "t.test",
                          #p.adjust.method = NULL), 
            #file="t.results.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+
 
