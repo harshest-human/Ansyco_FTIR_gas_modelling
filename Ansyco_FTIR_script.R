@@ -570,4 +570,19 @@ CO2_3D <- plot3d(x=strategy4_SS2_CO2$`height`,
                  radius = 2)
 
 
+##########trial 2 (with mean concentrations)#########
+strategy4_SS2_CO2$height <- as.factor(strategy4_SS2_CO2$height)
+strategy4_SS2_CO2$CO2 <- as.numeric(strategy4_SS2_CO2$CO2)
+strategy4_SS2_CO2$wd_speed <- as.factor(strategy4_SS2_CO2$wd_speed)
+
+
+
+CO2_3D <- plot3d(x=strategy4_SS2_CO2$`height`,
+                 y=strategy4_SS2_CO2$`CO2`,
+                 z=strategy4_SS2_CO2$`wd_speed`,
+                 xlab="Height (m)",
+                 ylab="CO2 (ppm)",
+                 zlab="wd_speed",
+                 type="s",
+                 radius = 2)
 
