@@ -168,7 +168,7 @@ summary(lm(CH4~height+Samp_loc, data=FTIRxwindxDWD))
 anova(aov(CH4~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 compare_means(CH4~Samp_loc, data=FTIRxwindxDWD, group.by = "height", method = "t.test")
 
-summary(lm(CH4~height+Samp_loc, data=FTIRxwindxDWD))
+summary(lm(NH3~height+Samp_loc, data=FTIRxwindxDWD))
 anova(aov(NH3~as.factor(height)*Samp_loc, data=FTIRxwindxDWD))
 compare_means(NH3~Samp_loc, data=FTIRxwindxDWD, group.by = "height", method = "t.test")
 
@@ -520,5 +520,55 @@ ggline(FTIR_SW_SS2, x="height", y="NH3", na.rm=TRUE,
                          #method = "t.test",
                          #p.adjust.method = NULL), 
            #file="t.results.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+
+
+#mean_comparison
+#ST1_mean <- FTIRxwindxDWD %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE),
+                                                             #CH4 = mean(CH4, na.rm = TRUE),
+                                                             #NH3 = mean(NH3, na.rm = TRUE))
+
+
+
+
+####################3D scatterplot#########
+
+library(rgl)
+
+FTIRxwindxDWD$height <- as.factor(FTIRxwindxDWD$height)
+FTIRxwindxDWD$wind_speed <- as.numeric(FTIRxwindxDWD$wind_speed)
+
+#Color 3D
+mycolors <- c('royalblue1', 'darkcyan', 'oldlace')
+
+
+CO2_3D <- plot3d(x=FTIRxwindxDWD$`height`,
+                 y=FTIRxwindxDWD$`CO2`,
+                 z=FTIRxwindxDWD$`wind_speed`,
+                 xlab="Height (m)",
+                 ylab="CO2 (ppm)",
+                 zlab="wind_speed",
+                 col = mycolors,
+                 type="s",
+                 radius = 5)
+
+
+
+##########trial 2 (with mean concentrations)#########
+strategy4_SS2_CO2$height <- as.factor(strategy4_SS2_CO2$height)
+strategy4_SS2_CO2$CO2 <- as.numeric(strategy4_SS2_CO2$CO2)
+strategy4_SS2_CO2$wd_speed <- as.factor(strategy4_SS2_CO2$wd_speed)
+
+
+
+CO2_3D <- plot3d(x=strategy4_SS2_CO2$`height`,
+                 y=strategy4_SS2_CO2$`CO2`,
+                 z=strategy4_SS2_CO2$`wd_speed`,
+                 xlab="Height (m)",
+                 ylab="CO2 (ppm)",
+                 zlab="wd_speed",
+                 type="s",
+                 radius = 2)
+
+
 
 
