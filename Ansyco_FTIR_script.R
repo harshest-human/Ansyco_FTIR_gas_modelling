@@ -149,12 +149,12 @@ anova(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
 TukeyHSD(aov(CO2~as.factor(height), data=FTIRxwindxDWD))
 
 
-summary(lm(CH4~height, data=FTIR_SW_SS1))
+summary(lm(CH4~height, data=FTIRxwindxDWD))
 anova(aov(CH4~as.factor(height), data=FTIRxwindxDWD))
 TukeyHSD(aov(CH4~as.factor(height), data=FTIRxwindxDWD))
 
 
-summary(lm(NH3~height, data=FTIR_SW_SS1))
+summary(lm(NH3~height, data=FTIRxwindxDWD))
 anova(aov(NH3~as.factor(height), data=FTIRxwindxDWD))
 TukeyHSD(aov(NH3~as.factor(height), data=FTIRxwindxDWD))
 
@@ -570,19 +570,81 @@ CO2_3D <- plot3d(x=strategy4_SS2_CO2$`height`,
                  radius = 2)
 
 
-##########trial 2 (with mean concentrations)#########
-strategy4_SS2_CO2$height <- as.factor(strategy4_SS2_CO2$height)
-strategy4_SS2_CO2$CO2 <- as.numeric(strategy4_SS2_CO2$CO2)
-strategy4_SS2_CO2$wd_speed <- as.factor(strategy4_SS2_CO2$wd_speed)
 
 
 
-CO2_3D <- plot3d(x=strategy4_SS2_CO2$`height`,
-                 y=strategy4_SS2_CO2$`CO2`,
-                 z=strategy4_SS2_CO2$`wd_speed`,
-                 xlab="Height (m)",
-                 ylab="CO2 (ppm)",
-                 zlab="wd_speed",
-                 type="s",
-                 radius = 2)
+#########gganimate###############
+library(gganimate)
+library(gifski)
+library(av)
+
+FTIR_SW_NE_SS1$height <- as.factor(FTIR_SW_NE_SS1$height)
+FTIR_SW_NE_SS1$wind_speed <- as.numeric(FTIR_SW_NE_SS1$wind_speed)
+FTIR_SW_NE_SS1$wind_direction <- as.numeric(FTIR_SW_NE_SS1$wind_direction)
+FTIR_SW_NE_SS1$wd_speed <- as.factor(FTIR_SW_NE_SS1$wd_speed)
+FTIR_SW_NE_SS1$wd_cardinals <- as.factor(FTIR_SW_NE_SS1$wd_cardinals)
+
+
+CO2_speed_anim <- ggplot(FTIR_SW_NE_SS1, aes(height, CO2, size= wd_cardinals, color = wd_speed)) +
+        geom_point() +
+        theme_bw() +
+        facet_wrap(~Samp_loc) +
+        # gganimate specific bits:
+        transition_time(DateTime_FI3min) +
+        ease_aes('linear')
+
+anim_save("CO2_speed_trial.gif")
+
+
+#########standard error in mean concentrations#############
+FTIR_SW<- FTIRxwindxDWD %>% filter(wd_cardinals== "Southern")
+mean(FTIR_SW$CO2, na.rm = TRUE)
+mean(FTIR_SW$CH4, na.rm = TRUE)
+mean(FTIR_SW$NH3, na.rm = TRUE)
+
+###CO2
+strategy3_CO2 <- summarySE(FTIR_SW, measurevar="CO2", groupvars=c("height","wd_cardinals"),
+                               na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+
+strategy3_CO2$height <- as.factor(strategy3_CO2$height)
+
+ggplot(strategy3_CO2, aes(x=height, y=CO2, colour=wd_cardinals))+
+        xlab("Height (m)") + ylab("CO2 (ppm)")+ labs(colour = "Windward")+ 
+        geom_errorbar(aes(ymin=CO2-ci, ymax=CO2+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
+        theme_classic(base_size = 16)+
+        geom_line(aes(group=wd_cardinals))+ geom_point()
+
+
+###CH4
+strategy3_CH4 <- summarySE(FTIR_SW, measurevar="CH4", groupvars=c("height","wd_cardinals"),
+                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+
+strategy3_CH4$height <- as.factor(strategy3_CH4$height)
+
+ggplot(strategy3_CH4, aes(x=height, y=CH4, colour=wd_cardinals))+
+        xlab("Height (m)") + ylab("CH4 (ppm)")+ labs(colour = "Windward")+ 
+        geom_errorbar(aes(ymin=CH4-ci, ymax=CH4+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
+        theme_classic(base_size = 16)+
+        geom_line(aes(group=wd_cardinals))+ geom_point()
+
+
+###NH3
+strategy3_NH3 <- summarySE(FTIR_SW, measurevar="NH3", groupvars=c("height","wd_cardinals"),
+                           na.rm = TRUE, conf.interval = 0.95, .drop = TRUE)
+
+strategy3_NH3$height <- as.factor(strategy3_NH3$height)
+
+ggplot(strategy3_NH3, aes(x=height, y=NH3, colour=wd_cardinals))+
+        xlab("Height (m)") + ylab("NH3 (ppm)")+ labs(colour = "Windward")+ 
+        geom_errorbar(aes(ymin=NH3-ci, ymax=NH3+ci), width=.2) +
+        geom_point(size=3)+ 
+        scale_colour_manual(values=c("#F5AAB0","#D36069"))+
+        theme_classic(base_size = 16)+
+        geom_line(aes(group=wd_cardinals))+ geom_point()
+
+
 
