@@ -28,8 +28,9 @@ ggline(FTIR_input, x="height", y="CO2",
        color ="wd_speed",
        facet.by ="Samp_loc",
        width=0.5,
-       position = position_dodge(w=0.15))+ ggtitle("CO2") +theme_bw()
-        
+       position = position_dodge(w=0.15))+ theme_bw() + theme(legend.position="top")
+
+
 
 #NH3 at different speeds
 ggline(FTIR_input, x="height", y="NH3",
@@ -38,7 +39,7 @@ ggline(FTIR_input, x="height", y="NH3",
        color ="wd_speed",
        facet.by ="Samp_loc",
        width=0.5,
-       position = position_dodge(w=0.15))+ ggtitle("NH3") +theme_bw()
+       position = position_dodge(w=0.15))+ theme_bw() + theme(legend.position="top")
 
 #CH4 at different speeds
 ggline(FTIR_input, x="height", y="CH4",
@@ -47,4 +48,4 @@ ggline(FTIR_input, x="height", y="CH4",
        color ="wd_speed",
        facet.by ="Samp_loc",
        width=0.5,
-       position = position_dodge(w=0.15))+ ggtitle("CH4") +theme_bw()
+       position = position_dodge(w=0.15))+ theme_bw() + theme(legend.position="top")
