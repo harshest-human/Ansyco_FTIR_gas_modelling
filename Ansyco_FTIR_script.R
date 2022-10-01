@@ -11,16 +11,16 @@ library(readxl)
 library(dplyr)
 library(openair)
 library(car)
-library(xlsx)
 library(ggpubr)
 library(outliers)
 library(gtsummary)
+library(writexl)
 library(Rmisc) #to summarize and find confidence intervals
 
 ########### FTIR DATA IMPORT ###############
-FTIR_input <- read.table(paste0("20210902_Vertical_Pipes_Harsh_06nov.txt"), header = T, fill = TRUE) %>%
-        mutate(DateTime = paste(Datum, " ", Zeit)) %>%
-        relocate(DateTime)
+FTIR_input <- read.table(paste0("Harsh_vertical_pipe_setup.txt"),
+                         header = T, fill = TRUE, check.names = F) %>%
+        mutate(DateTime = paste(Datum, " ", Zeit)) %>% relocate(DateTime)
 
  #Categorize Messstelle into actual heights in meters
 FTIR_input$height[as.numeric(FTIR_input$Messstelle)==1]  = "0.60"
@@ -56,9 +56,9 @@ FTIR_input <- select(FTIR_input,
 
 
 ########### WIND & DWD DATA IMPORT ########
-wind_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/wind_WD_WS_data.txt")
+wind_input <- read.table("wind_WD_WS_data.txt")
 wind_input$DateTime_WI3min <- ymd_hms(wind_input$DateTime_WI3min)
-DWD_input <- read.table("D:/HARSHY DATA 2020/Master Thesis/USA Windmast data/USA_Anemometer_wind_modelling/DWD_interpolated.txt")
+DWD_input <- read.table("DWD_interpolated.txt")
 DWD_input$MESS_DATUM <- ymd_hms(DWD_input$MESS_DATUM)
  
  #FTIR+WIND 
@@ -76,7 +76,6 @@ FTIR_06OCT_06NOV <- select(FTIR_input,
                DateTime_FI3min <= ymd_hms("2021-11-06 11:21:00"))
 FTIRxDWD <- left_join(FTIR_06OCT_06NOV,DWD_input, 
                       by = c("DateTime_FI3min" = "MESS_DATUM"))
-
 
 ########### FINAL DATA FRAME ###################
 FTIRxwindxDWD <- rbind(FTIRxwind,FTIRxDWD)
@@ -118,29 +117,13 @@ FTIRxwindxDWD <- select(FTIRxwindxDWD,
         filter(DateTime_FI3min >= ymd_hms("2021-09-02 11:57:00"),
                DateTime_FI3min <= ymd_hms("2021-11-06 11:18:00")) %>% na.omit()
 
+
+
  #Remove Outliers
 Remove_outliers_function <- source("remove_outliers_function.R")
 FTIRxwindxDWD$CO2 <- remove_outliers(FTIRxwindxDWD$CO2)
 FTIRxwindxDWD$CH4 <- remove_outliers(FTIRxwindxDWD$CH4)
 FTIRxwindxDWD$NH3 <- remove_outliers(FTIRxwindxDWD$NH3)
-
-
-########### WIND_GRAPH ######################
-windRose(FTIRxwindxDWD  , ws = "wind_speed", wd = "wind_direction",
-         breaks = c(0,2,4,6,8,12),
-         auto.text = FALSE,
-         paddle = FALSE,
-         grid.line = 5,
-         key = list(lables = c(">0 - 2",
-                               ">2 - 4",
-                               ">4 - 6",
-                               ">6 - 8",
-                               ">8 - 12")),
-         key.header = "02.09.2021 - 06.11.2021",
-         key.footer = "Wind_speed (m/s)",
-         key.position = "bottom",
-         par.settings=list(axis.line=list(col="lightgray")),
-         col = c("#4f4f4f", "#0a7cb9", "#f9be00", "#ff7f2f", "#d7153a"))
 
 
 ##################  MODELING STRATEGY 1 ############################
@@ -438,7 +421,7 @@ ggplot(strategy4_SS2_NH3, aes(x=height, y=NH3, colour=wd_speed))+
         geom_line(aes(group=wd_speed))+ geom_point()
 
 ########### Write table (dataframe.xlsx) ##################
-#write.xlsx(FTIRxwindxDWD, file="FTIR_final_data.xlsx",sheetName = "Sheet1",col.names = TRUE, row.names = TRUE, append = FALSE)
+write_xlsx(FTIRxwindxDWD, "FTIR_final_data.xlsx")
 
 #FTIR_SW_NE_SS1 %>% group_by(height) %>% summarise(CH4 = mean(CH4, na.rm = TRUE))
 #FTIR_SW_NE_SS2 %>% group_by(height) %>% summarise(CO2 = mean(CO2, na.rm = TRUE))
