@@ -121,16 +121,15 @@ summary(lm(CO2~height, data=FTIR_SS2))
 summary(lm(CH4~height, data=FTIR_SS2))
 summary(lm(NH3~height, data=FTIR_SS2)) 
 
-#Regression Model SS1 (to find percentage difference)
-summary(lm(CO2~wd_speed, data=FTIR_SS1))
-summary(lm(CH4~wd_speed, data=FTIR_SS1))
-summary(lm(NH3~wd_speed, data=FTIR_SS1))
+#Regression Model with wd_speed SS1 (to find percentage difference)
+summary(lm(CO2~height*wd_speed, data=FTIR_SS1))
+summary(lm(CH4~height*wd_speed, data=FTIR_SS1))
+summary(lm(NH3~height*wd_speed, data=FTIR_SS1))
 
-#Regression Model SS2 (to find percentage difference)
-summary(lm(CO2~wd_speed, data=FTIR_SS2))
-summary(lm(CH4~wd_speed, data=FTIR_SS2))
-summary(lm(NH3~wd_speed, data=FTIR_SS2)) 
-
+#Regression Model with wd_speed SS2 (to find percentage difference)
+summary(lm(CO2~height*wd_speed, data=FTIR_SS2))
+summary(lm(CH4~height*wd_speed, data=FTIR_SS2))
+summary(lm(NH3~height*wd_speed, data=FTIR_SS2)) 
 
 ########### DATA mean tibble height###############
 Tib_SS1 <- FTIR_SS1 %>% group_by(height) %>%
