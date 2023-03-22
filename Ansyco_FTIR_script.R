@@ -180,8 +180,7 @@ FTIR_input <- FTIR_input %>%
         mutate(GC_ratios = round(CH4/NH3, 2))
 
 
-########### DATA Visualization 0 (ggline::ggpubr) ###############
-#CH4/NH3 Mixing ratios at different heights
+#Plotting CH4/NH3 Mixing ratios at different heights
 ggline(FTIR_input, x="height", y="GC_ratios",
        add = "mean_se",
        shape = 22,
@@ -195,5 +194,7 @@ ggline(FTIR_input, x="height", y="GC_ratios",
         ylab("Ratios")
 
 
+#ANOVA Model for Mixing ratios
+anova(aov(GC_ratios~height*Samp_loc, data=FTIR_input))
 
 
