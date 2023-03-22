@@ -19,6 +19,7 @@ FTIR_input$height <- as.factor(FTIR_input$height)
 FTIR_input$wd_speed <- as.factor(FTIR_input$wd_speed)
 FTIR_input$wd_cardinals <- as.factor(FTIR_input$wd_cardinals)
 
+
 ########### DATA Visualization 1 (ggline::ggpubr) ###############
 #CO2 at different heights
 ggline(FTIR_input, x="height", y="CO2",
@@ -193,8 +194,30 @@ ggline(FTIR_input, x="height", y="GC_ratios",
         xlab("Height  (meters)")+
         ylab("Ratios")
 
-
 #ANOVA Model for Mixing ratios
-anova(aov(GC_ratios~height*Samp_loc, data=FTIR_input))
+anova(aov(GC_ratios~height, data=FTIR_input))
+anova(aov(GC_ratios~height, data=FTIR_SS1))
+anova(aov(GC_ratios~height, data=FTIR_SS2))
+
+#Regression Model for Mixing ratios
+summary(lm(GC_ratios~height, data=FTIR_input))
+summary(lm(GC_ratios~height, data=FTIR_SS1))
+summary(lm(GC_ratios~height, data=FTIR_SS2))
+
+#Coeffecient of Variation of CO2, CH4, NH3 at each height
+Group_stats <- FTIR_input %>% group_by(height) %>% 
+        summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
+                  CH4_mean = mean(CH4), CH4_sd = sd(CH4),
+                  NH3_mean = mean(NH3), NH3_sd = sd(NH3))
+
+CV <- Group_stats %>%
+        group_by(height) %>%
+        mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
+               cv_CH4 = ((CH4_sd/CH4_mean)*100),
+               cv_NH3 = ((NH3_sd/NH3_mean)*100))
+print(CV)
+
+
+
 
 
