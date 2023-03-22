@@ -26,10 +26,10 @@ FTIR_input <- FTIR_input %>%
         mutate(GC_ratios = round(CH4/NH3, 2))
 
 ########### DATA Visualization 0 (ggline::ggpubr) ###############
-#CH4/NH3 ratios at different heights
+#CH4/NH3 Mixing ratios at different heights
 ggline(FTIR_input, x="height", y="GC_ratios",
        add = "mean_se",
-       shape = ,
+       shape = 22,
        point.size = 1.5,
        facet.by ="Samp_loc",
        width=0.5,
