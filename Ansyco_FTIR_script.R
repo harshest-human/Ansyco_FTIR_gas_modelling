@@ -19,25 +19,6 @@ FTIR_input$height <- as.factor(FTIR_input$height)
 FTIR_input$wd_speed <- as.factor(FTIR_input$wd_speed)
 FTIR_input$wd_cardinals <- as.factor(FTIR_input$wd_cardinals)
 
-########### Calculating Mixing ratios ###############
-
-FTIR_input <- FTIR_input %>%
-        group_by(height) %>%
-        mutate(GC_ratios = round(CH4/NH3, 2))
-
-########### DATA Visualization 0 (ggline::ggpubr) ###############
-#CH4/NH3 Mixing ratios at different heights
-ggline(FTIR_input, x="height", y="GC_ratios",
-       add = "mean_se",
-       shape = 22,
-       point.size = 1.5,
-       facet.by ="Samp_loc",
-       width=0.5,
-       position = position_dodge(w=0.15))+
-        theme_bw() + theme(legend.position="False")+
-        xlab("Height  (meters)")+
-        ylab("Ratios")
-
 ########### DATA Visualization 1 (ggline::ggpubr) ###############
 #CO2 at different heights
 ggline(FTIR_input, x="height", y="CO2",
@@ -191,6 +172,27 @@ Tib_SS2_high <- FTIR_SS2 %>% filter(wd_speed == "high") %>% group_by(height) %>%
 
 #write_xlsx(Tib_SS2_low, "Tib_SS2_low_data.xlsx")
 #write_xlsx(Tib_SS2_high, "Tib_SS2_high_data.xlsx")
+
+
+########### Calculating Mixing ratios ###############
+FTIR_input <- FTIR_input %>%
+        group_by(height) %>%
+        mutate(GC_ratios = round(CH4/NH3, 2))
+
+
+########### DATA Visualization 0 (ggline::ggpubr) ###############
+#CH4/NH3 Mixing ratios at different heights
+ggline(FTIR_input, x="height", y="GC_ratios",
+       add = "mean_se",
+       shape = 22,
+       point.size = 1.5,
+       facet.by ="Samp_loc",
+       color ="wd_speed",
+       width=0.5,
+       position = position_dodge(w=0.15))+
+        theme_bw() + theme(legend.position="top")+
+        xlab("Height  (meters)")+
+        ylab("Ratios")
 
 
 
