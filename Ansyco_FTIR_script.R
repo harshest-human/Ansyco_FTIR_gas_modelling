@@ -193,13 +193,14 @@ ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 22,
        point.size = 2.5,
-       width=1.5,
-       facet.by ="Samp_loc")+
+       width=1.5,)+
         theme_bw() + theme(legend.position="top")+
         xlab("Height  (meters)")+
         ylab("Ratios")
 
-#Without Wind speed information 
+
+
+#With Wind speed information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 22,
