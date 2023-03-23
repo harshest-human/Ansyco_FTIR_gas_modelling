@@ -175,49 +175,66 @@ Tib_SS2_high <- FTIR_SS2 %>% filter(wd_speed == "high") %>% group_by(height) %>%
 #write_xlsx(Tib_SS2_high, "Tib_SS2_high_data.xlsx")
 
 
+
 ########### Calculating Mixing ratios ###############
 FTIR_input <- FTIR_input %>%
         group_by(height) %>%
-        mutate(GC_ratios = round(CH4/NH3, 2))
+        mutate(GC_ratio = round(CH4/NH3, 2))
 
 
 #Plotting CH4/NH3 Mixing ratios at different heights
-ggline(FTIR_input, x="height", y="GC_ratios",
+#Without Wind speed information 
+ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 22,
-       point.size = 1.5,
+       point.size = 2.5,
+       width=1.5,
+       facet.by ="Samp_loc")+
+        theme_bw() + theme(legend.position="top")+
+        xlab("Height  (meters)")+
+        ylab("Ratios")
+
+#Without Wind speed information 
+ggline(FTIR_input, x="height", y="GC_ratio",
+       add = "mean_se",
+       shape = 22,
+       point.size = 2.5,
        facet.by ="Samp_loc",
        color ="wd_speed",
-       width=0.5,
+       width=1.5,
        position = position_dodge(w=0.15))+
         theme_bw() + theme(legend.position="top")+
         xlab("Height  (meters)")+
         ylab("Ratios")
 
-#ANOVA Model for Mixing ratios
-anova(aov(GC_ratios~height, data=FTIR_input))
-anova(aov(GC_ratios~height, data=FTIR_SS1))
-anova(aov(GC_ratios~height, data=FTIR_SS2))
+######ANOVA Model for Mixing ratios#####
+FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
+FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
 
-#Regression Model for Mixing ratios
-summary(lm(GC_ratios~height, data=FTIR_input))
-summary(lm(GC_ratios~height, data=FTIR_SS1))
-summary(lm(GC_ratios~height, data=FTIR_SS2))
+anova(aov(GC_ratio~height, data=FTIR_input))
+anova(aov(GC_ratio~height, data=FTIR_SS1))
+anova(aov(GC_ratio~height, data=FTIR_SS2))
 
-#Coeffecient of Variation of CO2, CH4, NH3 at each height
+######Regression Model for Mixing ratios####
+summary(lm(GC_ratio~height, data=FTIR_input))
+summary(lm(GC_ratio~height, data=FTIR_SS1))
+summary(lm(GC_ratio~height, data=FTIR_SS2))
+
+####mean and SD of CO2, CH4, NH3 at each height####
 Group_stats <- FTIR_input %>% group_by(height) %>% 
         summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
                   CH4_mean = mean(CH4), CH4_sd = sd(CH4),
-                  NH3_mean = mean(NH3), NH3_sd = sd(NH3))
+                  NH3_mean = mean(NH3), NH3_sd = sd(NH3),
+                  GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
 
+#write_xlsx(Group_stats, "stat_SS1_.xlsx")
+
+#Coeffecient of Variation of CO2, CH4, NH3 at each height
 CV <- Group_stats %>%
         group_by(height) %>%
         mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
                cv_CH4 = ((CH4_sd/CH4_mean)*100),
                cv_NH3 = ((NH3_sd/NH3_mean)*100))
 print(CV)
-
-
-
 
 
