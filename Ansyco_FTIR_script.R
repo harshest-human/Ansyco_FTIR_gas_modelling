@@ -10,7 +10,12 @@ library(writexl)
 
 
 ########### FTIR DATA IMPORT ###############
-FTIR_input <- read_excel("FTIR_final_data.xlsx") %>% filter(wd_cardinals == "Southern")
+FTIR_raw <- read_excel("FTIR_final_data.xlsx") 
+FTIR_input <- FTIR_raw %>%                                   #Filtering Southwestern data
+        filter((FTIR_raw$wind_direction >= 160) 
+               & 
+               (FTIR_raw$wind_direction <= 270))
+
 
 #strings
 FTIR_input$Samp_loc <- as.factor(FTIR_input$Samp_loc)
