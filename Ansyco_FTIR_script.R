@@ -165,7 +165,7 @@ write_xlsx(Tib_SS1_low, "Tib_SS1_low_data.xlsx")
 write_xlsx(Tib_SS1_high, "Tib_SS1_high_data.xlsx")
 
 
-########### DATA mean tibble height & wd_speed (SS1) ###############
+########### DATA mean tibble height & wd_speed (SS2) ###############
 Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
         summarise(CO2=mean(CO2),
                   CH4=mean(CH4),
@@ -188,19 +188,27 @@ FTIR_input <- FTIR_input %>%
 
 
 #Plotting CH4/NH3 Mixing ratios at different heights
-#Without Wind speed information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 22,
        point.size = 2.5,
-       width=1.5,)+
+       width=1.5)+
         theme_bw() + theme(legend.position="top")+
         xlab("Height  (meters)")+
         ylab("Ratios")
 
+#With Sampling location information 
+ggline(FTIR_input, x="height", y="GC_ratio",
+       add = "mean_se",
+       shape = 22,
+       point.size = 2.5,
+       width=1.5,
+       facet.by ="Samp_loc")+
+        theme_bw() + theme(legend.position="top")+
+        xlab("Height  (meters)")+
+        ylab("Ratios")
 
-
-#With Wind speed information 
+#Without Wind speed information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 22,
@@ -242,5 +250,19 @@ CV <- Group_stats %>%
                cv_CH4 = ((CH4_sd/CH4_mean)*100),
                cv_NH3 = ((NH3_sd/NH3_mean)*100))
 print(CV)
+
+
+
+
+#####Calculating relative error as a percentage of the correct value of H=0.6#####
+Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
+        summarise(CO2=mean(CO2),
+                  CH4=mean(CH4),
+                  NH3=mean(NH3))
+
+Tib_error<- Tib_SS2_low %>% mutate(error_CO2 = abs(CO2 - 648) / 648 * 100,
+                                   error_CH4 = abs(CH4 - 16.8) / 16.8 * 100,
+                                   error_NH3 = abs(NH3 - 2.7) / 2.7 * 100)
+
 
 
