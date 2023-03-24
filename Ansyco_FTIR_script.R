@@ -3,14 +3,13 @@ getwd()
 library(tidyverse)
 library(psych)
 library(ggplot2)
-library(readxl)
 library(dplyr)
 library(ggpubr)
 library(writexl)
 
 
 ########### FTIR DATA IMPORT ###############
-FTIR_raw <- read_excel("FTIR_final_data.xlsx") 
+FTIR_raw <- read.delim("FTIR_final_data.txt") 
 FTIR_input <- FTIR_raw %>%                                   #Filtering Southwestern data
         filter((FTIR_raw$wind_direction >= 160) 
                & 
@@ -37,6 +36,7 @@ ggline(FTIR_input, x="height", y="CO2",
         theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
+
 
 #NH3 at different heights
 ggline(FTIR_input, x="height", y="NH3",
@@ -243,7 +243,7 @@ Group_stats <- FTIR_input %>% group_by(height) %>%
 
 #write_xlsx(Group_stats, "stat_SS1_.xlsx")
 
-#Coeffecient of Variation of CO2, CH4, NH3 at each height
+#####Coeffecient of Variation of CO2, CH4, NH3 at each height####
 CV <- Group_stats %>%
         group_by(height) %>%
         mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
@@ -260,9 +260,40 @@ Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-Tib_error<- Tib_SS2_low %>% mutate(error_CO2 = abs(CO2 - 648) / 648 * 100,
-                                   error_CH4 = abs(CH4 - 16.8) / 16.8 * 100,
-                                   error_NH3 = abs(NH3 - 2.7) / 2.7 * 100)
+Tib_error <- Tib_SS2_low %>% 
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 
+
+######## Distribution of Data###########
+qqline(FTIR_input$NH3)
+
+# Calculate mean and standard error by Samp_loc and height
+summary_df <- FTIR_input %>%
+        group_by(Samp_loc, height) %>%
+        summarise(mean_CO2 = mean(CO2),
+                  se_CO2 = sd(CO2) / sqrt(n()))
+
+# Calculate percentage errors relative to mean at height 0.6 meters
+base_value <- summary_df$mean_CO2[summary_df$height == 0.6]
+summary_df <- summary_df %>%
+        mutate(CO2_error_pct = 100 * (mean_CO2 - base_value) / base_value)
+
+
+
+######## Plotting GCs by relative error ###########
+# Plot using ggline
+ggline(summary_df, x="height", y="CO2_error_pct", 
+       add = "mean_se",
+       shape = 2,
+       point.size = 1.5,
+       facet.by ="Samp_loc",
+       width=0.5,
+       position = position_dodge(w=0.15))+
+        theme_bw() +
+        theme(legend.position="none") +
+        xlab("Height (meters)") +
+        ylab("% error relative to mean at 0.6m")
 
