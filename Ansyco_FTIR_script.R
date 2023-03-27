@@ -41,7 +41,6 @@ ggline(FTIR_input, x="height", y="CO2",
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
 
-
 #NH3 at different heights
 ggline(FTIR_input, x="height", y="NH3",
        add = "mean_se",
@@ -276,20 +275,18 @@ CV <- Group_stats %>%
 print(CV)
 
 
-
-
 ######## Distribution of Data###########
-qqnorm(FTIR_input$NH3)
+#qqnorm(FTIR_input$NH3)
 
 
 
 ######EXTRAS: Create the speed column using cut()####
-speed_breaks <- c(0, 1, 2, 3, 4, 5, 6, 7, 8,9, 10,11, 12, Inf)
-speed_labels <- c(0:12)
+#speed_breaks <- c(0, 1, 2, 3, 4, 5, 6, 7, 8,9, 10,11, 12, Inf)
+#speed_labels <- c(0:12)
 
-FTIR_input$wd_speed <- cut(FTIR_input$wind_speed, breaks = speed_breaks, labels = speed_labels)
+#FTIR_input$wd_speed <- cut(FTIR_input$wind_speed, breaks = speed_breaks, labels = speed_labels)
 
 # check number of observations for each wind speed level
-table(FTIR_input$wd_speed)
+#table(FTIR_input$wd_speed)
 
 
