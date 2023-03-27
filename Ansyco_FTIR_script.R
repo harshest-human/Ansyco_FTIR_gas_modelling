@@ -6,6 +6,9 @@ library(ggplot2)
 library(dplyr)
 library(ggpubr)
 library(writexl)
+library(car)
+library(carData)
+library(stats)
 
 
 ########### FTIR DATA IMPORT ###############
@@ -15,6 +18,7 @@ FTIR_input <- FTIR_raw %>%                                   #Filtering Southwes
                & 
                (FTIR_raw$wind_direction <= 270))
 
+FTIR_input$wd_speed <- ifelse(FTIR_input$wind_speed > 3, "high", "low") #Sorting wind speeds
 
 #strings
 FTIR_input$Samp_loc <- as.factor(FTIR_input$Samp_loc)
@@ -106,7 +110,7 @@ ggline(FTIR_input, x="height", y="CH4",
 ########### DATA Modeling ###############
 #ANOVA Model SS1
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
-anova(aov(CO2~height*wd_speed, data=FTIR_SS1))
+anova(aov(CO2~height*wd_speed, data=FTIR_SS1)) # alternative: kruskal.test(CO2 ~ height, FTIR_SS1)
 anova(aov(CH4~height*wd_speed, data=FTIR_SS1))
 anova(aov(NH3~height*wd_speed, data=FTIR_SS1))
 
@@ -136,7 +140,7 @@ summary(lm(CO2~height*wd_speed, data=FTIR_SS2))
 summary(lm(CH4~height*wd_speed, data=FTIR_SS2))
 summary(lm(NH3~height*wd_speed, data=FTIR_SS2)) 
 
-########### DATA mean tibble height###############
+########### Relative errors###############
 Tib_SS1 <- FTIR_SS1 %>% group_by(height) %>%
         summarise(CO2=mean(CO2),
                   CH4=mean(CH4),
@@ -147,10 +151,18 @@ Tib_SS2 <- FTIR_SS2 %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-#write_xlsx(Tib_SS1, "Tib_SS1_data.xlsx")
-#write_xlsx(Tib_SS2, "Tib_SS2_data.xlsx")
+#Calculating relative error as a percentage of the correct value of H=0.6
+Tib_SS1 <- Tib_SS1 %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
 
-########### DATA mean tibble height & wd_speed (SS1) ###############
+Tib_SS2 <- Tib_SS2 %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+
+########### Relative errors SS1###############
 Tib_SS1_low <- FTIR_SS1 %>% filter(wd_speed == "low") %>% group_by(height) %>%
         summarise(CO2=mean(CO2),
                   CH4=mean(CH4),
@@ -161,11 +173,18 @@ Tib_SS1_high <- FTIR_SS1 %>% filter(wd_speed == "high") %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-write_xlsx(Tib_SS1_low, "Tib_SS1_low_data.xlsx")
-write_xlsx(Tib_SS1_high, "Tib_SS1_high_data.xlsx")
+#Calculating relative error as a percentage of the correct value of H=0.6
+Tib_SS1_low<- Tib_SS1_low %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
 
+Tib_SS1_high <-Tib_SS1_high  %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
 
-########### DATA mean tibble height & wd_speed (SS2) ###############
+########### Relative errors SS2###############
 Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
         summarise(CO2=mean(CO2),
                   CH4=mean(CH4),
@@ -176,9 +195,16 @@ Tib_SS2_high <- FTIR_SS2 %>% filter(wd_speed == "high") %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-#write_xlsx(Tib_SS2_low, "Tib_SS2_low_data.xlsx")
-#write_xlsx(Tib_SS2_high, "Tib_SS2_high_data.xlsx")
+#Calculating relative error as a percentage of the correct value of H=0.6
+Tib_SS2_low<- Tib_SS2_low %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
 
+Tib_SS2_high <-Tib_SS2_high  %>% 
+        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
+               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
+               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
 
 
 ########### Calculating Mixing ratios ###############
@@ -234,16 +260,14 @@ summary(lm(GC_ratio~height, data=FTIR_input))
 summary(lm(GC_ratio~height, data=FTIR_SS1))
 summary(lm(GC_ratio~height, data=FTIR_SS2))
 
-####mean and SD of CO2, CH4, NH3 at each height####
+####Coef. of Var of each gas at each height####
 Group_stats <- FTIR_input %>% group_by(height) %>% 
         summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
                   CH4_mean = mean(CH4), CH4_sd = sd(CH4),
                   NH3_mean = mean(NH3), NH3_sd = sd(NH3),
                   GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
 
-#write_xlsx(Group_stats, "stat_SS1_.xlsx")
-
-#####Coeffecient of Variation of CO2, CH4, NH3 at each height####
+#Coeffecient of Variation of CO2, CH4, NH3 at each height
 CV <- Group_stats %>%
         group_by(height) %>%
         mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
@@ -254,46 +278,18 @@ print(CV)
 
 
 
-#####Calculating relative error as a percentage of the correct value of H=0.6#####
-Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
-        summarise(CO2=mean(CO2),
-                  CH4=mean(CH4),
-                  NH3=mean(NH3))
-
-Tib_error <- Tib_SS2_low %>% 
-        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
-               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
-               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
-
-
-
 ######## Distribution of Data###########
-qqline(FTIR_input$NH3)
-
-# Calculate mean and standard error by Samp_loc and height
-summary_df <- FTIR_input %>%
-        group_by(Samp_loc, height) %>%
-        summarise(mean_CO2 = mean(CO2),
-                  se_CO2 = sd(CO2) / sqrt(n()))
-
-# Calculate percentage errors relative to mean at height 0.6 meters
-base_value <- summary_df$mean_CO2[summary_df$height == 0.6]
-summary_df <- summary_df %>%
-        mutate(CO2_error_pct = 100 * (mean_CO2 - base_value) / base_value)
+qqnorm(FTIR_input$NH3)
 
 
 
-######## Plotting GCs by relative error ###########
-# Plot using ggline
-ggline(summary_df, x="height", y="CO2_error_pct", 
-       add = "mean_se",
-       shape = 2,
-       point.size = 1.5,
-       facet.by ="Samp_loc",
-       width=0.5,
-       position = position_dodge(w=0.15))+
-        theme_bw() +
-        theme(legend.position="none") +
-        xlab("Height (meters)") +
-        ylab("% error relative to mean at 0.6m")
+######EXTRAS: Create the speed column using cut()####
+speed_breaks <- c(0, 1, 2, 3, 4, 5, 6, 7, 8,9, 10,11, 12, Inf)
+speed_labels <- c(0:12)
+
+FTIR_input$wd_speed <- cut(FTIR_input$wind_speed, breaks = speed_breaks, labels = speed_labels)
+
+# check number of observations for each wind speed level
+table(FTIR_input$wd_speed)
+
 
