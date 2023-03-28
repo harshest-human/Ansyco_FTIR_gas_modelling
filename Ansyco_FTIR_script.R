@@ -9,13 +9,13 @@ library(writexl)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_raw <- read.delim("FTIR_final_data.txt") 
-FTIR_input <- FTIR_raw %>%                                   #Filtering Southwestern data
+FTIR_input <- FTIR_raw %>%                                              #Filtering Southwestern data
         filter((FTIR_raw$wind_direction >= 160) 
                & 
                (FTIR_raw$wind_direction <= 270))
 
-FTIR_input$wd_speed <- ifelse(FTIR_input$wind_speed > 3, "high", "low") #Sorting wind speeds
-
+FTIR_input$wd_speed <- ifelse(FTIR_input$wind_speed > 3, "high", "low") #Sorting wind speeds 
+                                                                        #Because average wind speed was 3m/s)                                                
 #strings
 FTIR_input$Samp_loc <- as.factor(FTIR_input$Samp_loc)
 FTIR_input$Messstelle <- as.factor(FTIR_input$Messstelle)
@@ -71,6 +71,7 @@ ggline(FTIR_input, x="height", y="CO2",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
         theme_bw()+theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
@@ -83,8 +84,9 @@ ggline(FTIR_input, x="height", y="NH3",
        color ="wd_speed",
        facet.by ="Samp_loc",
        width=0.5,
-       position = position_dodge(w=0.15))+ theme_bw()+
-        theme(legend.position="False")+
+       position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
+        theme_bw()+ theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
 
@@ -96,10 +98,15 @@ ggline(FTIR_input, x="height", y="CH4",
        color ="wd_speed",
        facet.by ="Samp_loc",
        width=0.5,
-       position = position_dodge(w=0.15))+ theme_bw()+
-        theme(legend.position="False")+
+       position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
+        theme_bw()+ theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
+
+
+########### Saving graphs (ggsave::ggplot2) ###############
+#ggsave("plots.png", plot = p1, dpi = 300, width = 8, height = 6, units = "in", device = "png")
 
 
 ########### DATA Modeling ###############
@@ -211,36 +218,37 @@ FTIR_input <- FTIR_input %>%
 #Plotting CH4/NH3 Mixing ratios at different heights
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
-       shape = 22,
-       point.size = 2.5,
+       shape = 11,
+       point.size = 1.5,
        width=1.5)+
         theme_bw() + theme(legend.position="top")+
         xlab("Height  (meters)")+
-        ylab("Ratios")
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
 
 #With Sampling location information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
-       shape = 22,
-       point.size = 2.5,
+       shape = 11,
+       point.size = 1.5,
        width=1.5,
        facet.by ="Samp_loc")+
         theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
-        ylab("Ratios")
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
 
 #Without Wind speed information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
-       shape = 22,
-       point.size = 2.5,
+       shape = 11,
+       point.size = 1.5,
        facet.by ="Samp_loc",
        color ="wd_speed",
        width=1.5,
        position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkorchid4","aquamarine4"))+
         theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
-        ylab("Ratio")
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
 
 ######ANOVA Model for Mixing ratios#####
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
