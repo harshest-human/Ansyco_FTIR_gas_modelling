@@ -270,7 +270,7 @@ ggline(FTIR_input, x="height", y="GC_ratio",
        color ="wd_speed",
        width=1.5,
        position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("darkorchid4","aquamarine4"))+
+        scale_color_manual(values = c("darkorchid4","burlywood4"))+
         theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
