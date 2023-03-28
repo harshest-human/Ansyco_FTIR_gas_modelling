@@ -109,38 +109,63 @@ ggline(FTIR_input, x="height", y="CH4",
 #ggsave("plots.png", plot = p1, dpi = 300, width = 8, height = 6, units = "in", device = "png")
 
 
-########### DATA Modeling ###############
-#ANOVA Model SS1
+########### ANOVA & Kruskal Modeling ###############
+###### W/O SS #####
+#ANOVA 
+anova(aov(CO2~height*Samp_loc, data=FTIR_input))
+anova(aov(CH4~height*Samp_loc, data=FTIR_input))
+anova(aov(NH3~height*Samp_loc, data=FTIR_input))
+
+#Kruskal 
+kruskal.test(CO2 ~ Samp_loc, FTIR_input)
+kruskal.test(CH4 ~ Samp_loc, FTIR_input)
+kruskal.test(NH3 ~ Samp_loc, FTIR_input)
+
+###### SS2 #####
+#ANOVA SS1
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
-anova(aov(CO2~height*wd_speed, data=FTIR_SS1)) # alternative: kruskal.test(CO2 ~ height, FTIR_SS1)
+anova(aov(CO2~height*wd_speed, data=FTIR_SS1))
 anova(aov(CH4~height*wd_speed, data=FTIR_SS1))
 anova(aov(NH3~height*wd_speed, data=FTIR_SS1))
 
-#ANOVA Model SS2
+#Kruskal SS1
+kruskal.test(CO2 ~ wd_speed, FTIR_SS1)
+kruskal.test(CH4 ~ wd_speed, FTIR_SS1)
+kruskal.test(NH3 ~ wd_speed, FTIR_SS1)
+
+###### SS2 #####
+#ANOVA SS2
 FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
 anova(aov(CO2~height*wd_speed, data=FTIR_SS2))
 anova(aov(CH4~height*wd_speed, data=FTIR_SS2))
 anova(aov(NH3~height*wd_speed, data=FTIR_SS2))
 
-#Regression Model SS1 (to find percentage difference)
-summary(lm(CO2~height, data=FTIR_SS1))
-summary(lm(CH4~height, data=FTIR_SS1))
-summary(lm(NH3~height, data=FTIR_SS1))
+#Kruskal SS2
+kruskal.test(CO2 ~ wd_speed, FTIR_SS2)
+kruskal.test(CH4 ~ wd_speed, FTIR_SS2)
+kruskal.test(NH3 ~ wd_speed, FTIR_SS2)
 
-#Regression Model SS2 (to find percentage difference)
-summary(lm(CO2~height, data=FTIR_SS2))
-summary(lm(CH4~height, data=FTIR_SS2))
-summary(lm(NH3~height, data=FTIR_SS2)) 
 
-#Regression Model with wd_speed SS1 (to find percentage difference)
-summary(lm(CO2~height*wd_speed, data=FTIR_SS1))
-summary(lm(CH4~height*wd_speed, data=FTIR_SS1))
-summary(lm(NH3~height*wd_speed, data=FTIR_SS1))
+########### Generalized Linear Regression Modeling ###############
+#Regression  SS1 
+summary(glm(CO2~height, data=FTIR_SS1, family = Gamma(link = "log")))
+summary(glm(CH4~height, data=FTIR_SS1, family = Gamma(link = "log")))
+summary(glm(NH3~height, data=FTIR_SS1, family = Gamma(link = "log")))
 
-#Regression Model with wd_speed SS2 (to find percentage difference)
-summary(lm(CO2~height*wd_speed, data=FTIR_SS2))
-summary(lm(CH4~height*wd_speed, data=FTIR_SS2))
-summary(lm(NH3~height*wd_speed, data=FTIR_SS2)) 
+#Regression  SS2 
+summary(glm(CO2~height, data=FTIR_SS2, family = Gamma(link = "log")))
+summary(glm(CH4~height, data=FTIR_SS2, family = Gamma(link = "log")))
+summary(glm(NH3~height, data=FTIR_SS2, family = Gamma(link = "log"))) 
+
+#Regression  with wd_speed SS1 
+summary(glm(CO2~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
+summary(glm(CH4~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
+summary(glm(NH3~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
+
+#Regression  with wd_speed SS2 
+summary(glm(CO2~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
+summary(glm(CH4~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
+summary(glm(NH3~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log"))) 
 
 ########### Relative errors###############
 Tib_SS1 <- FTIR_SS1 %>% group_by(height) %>%
@@ -250,7 +275,7 @@ ggline(FTIR_input, x="height", y="GC_ratio",
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
 
-######ANOVA Model for Mixing ratios#####
+######ANOVA for Mixing ratios#####
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
 FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
 
@@ -258,7 +283,7 @@ anova(aov(GC_ratio~height, data=FTIR_input))
 anova(aov(GC_ratio~height, data=FTIR_SS1))
 anova(aov(GC_ratio~height, data=FTIR_SS2))
 
-######Regression Model for Mixing ratios####
+######Regression  for Mixing ratios####
 summary(lm(GC_ratio~height, data=FTIR_input))
 summary(lm(GC_ratio~height, data=FTIR_SS1))
 summary(lm(GC_ratio~height, data=FTIR_SS2))
