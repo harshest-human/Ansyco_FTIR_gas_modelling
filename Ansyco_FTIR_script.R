@@ -6,10 +6,6 @@ library(ggplot2)
 library(dplyr)
 library(ggpubr)
 library(writexl)
-library(car)
-library(carData)
-library(stats)
-
 
 ########### FTIR DATA IMPORT ###############
 FTIR_raw <- read.delim("FTIR_final_data.txt") 
@@ -88,7 +84,7 @@ ggline(FTIR_input, x="height", y="NH3",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+ theme_bw()+
-        theme(legend.position="top")+
+        theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
 
@@ -229,7 +225,7 @@ ggline(FTIR_input, x="height", y="GC_ratio",
        point.size = 2.5,
        width=1.5,
        facet.by ="Samp_loc")+
-        theme_bw() + theme(legend.position="top")+
+        theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("Ratios")
 
@@ -242,9 +238,9 @@ ggline(FTIR_input, x="height", y="GC_ratio",
        color ="wd_speed",
        width=1.5,
        position = position_dodge(w=0.15))+
-        theme_bw() + theme(legend.position="top")+
+        theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
-        ylab("Ratios")
+        ylab("Ratio")
 
 ######ANOVA Model for Mixing ratios#####
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
