@@ -71,7 +71,7 @@ ggline(FTIR_input, x="height", y="CO2",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
+        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
         theme_bw()+theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
@@ -85,7 +85,7 @@ ggline(FTIR_input, x="height", y="NH3",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
+        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
         theme_bw()+ theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
@@ -99,7 +99,7 @@ ggline(FTIR_input, x="height", y="CH4",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("darkseagreen4","deepskyblue4"))+
+        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
         theme_bw()+ theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
@@ -121,7 +121,7 @@ kruskal.test(CO2 ~ Samp_loc, FTIR_input)
 kruskal.test(CH4 ~ Samp_loc, FTIR_input)
 kruskal.test(NH3 ~ Samp_loc, FTIR_input)
 
-###### SS2 #####
+###### SS1 #####
 #ANOVA SS1
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
 anova(aov(CO2~height*wd_speed, data=FTIR_SS1))
@@ -147,22 +147,17 @@ kruskal.test(NH3 ~ wd_speed, FTIR_SS2)
 
 
 ########### Generalized Linear Regression Modeling ###############
-#Regression  SS1 
-summary(glm(CO2~height, data=FTIR_SS1, family = Gamma(link = "log")))
-summary(glm(CH4~height, data=FTIR_SS1, family = Gamma(link = "log")))
-summary(glm(NH3~height, data=FTIR_SS1, family = Gamma(link = "log")))
+#Regression  effect: height & Samp_loc 
+summary(glm(CO2~height*Samp_loc, data=FTIR_input, family = Gamma(link = "log")))
+summary(glm(CH4~height*Samp_loc, data=FTIR_input, family = Gamma(link = "log")))
+summary(glm(NH3~height*Samp_loc, data=FTIR_input, family = Gamma(link = "log")))
 
-#Regression  SS2 
-summary(glm(CO2~height, data=FTIR_SS2, family = Gamma(link = "log")))
-summary(glm(CH4~height, data=FTIR_SS2, family = Gamma(link = "log")))
-summary(glm(NH3~height, data=FTIR_SS2, family = Gamma(link = "log"))) 
-
-#Regression  with wd_speed SS1 
+#Regression  effect: height & wd_speed (SS1) 
 summary(glm(CO2~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
 summary(glm(CH4~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
 summary(glm(NH3~height*wd_speed, data=FTIR_SS1, family = Gamma(link = "log")))
 
-#Regression  with wd_speed SS2 
+#Regression  effect: height & wd_speed (SS2) 
 summary(glm(CO2~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
 summary(glm(CH4~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
 summary(glm(NH3~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log"))) 
@@ -178,16 +173,16 @@ Tib_SS2 <- FTIR_SS2 %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-#Calculating relative error as a percentage of the correct value of H=0.6
+#Calculating relative error
 Tib_SS1 <- Tib_SS1 %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 Tib_SS2 <- Tib_SS2 %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 ########### Relative errors SS1###############
 Tib_SS1_low <- FTIR_SS1 %>% filter(wd_speed == "low") %>% group_by(height) %>%
@@ -200,16 +195,16 @@ Tib_SS1_high <- FTIR_SS1 %>% filter(wd_speed == "high") %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-#Calculating relative error as a percentage of the correct value of H=0.6
+#Calculating relative error
 Tib_SS1_low<- Tib_SS1_low %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 Tib_SS1_high <-Tib_SS1_high  %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 ########### Relative errors SS2###############
 Tib_SS2_low <- FTIR_SS2 %>% filter(wd_speed == "low") %>% group_by(height) %>%
@@ -222,16 +217,16 @@ Tib_SS2_high <- FTIR_SS2 %>% filter(wd_speed == "high") %>% group_by(height) %>%
                   CH4=mean(CH4),
                   NH3=mean(NH3))
 
-#Calculating relative error as a percentage of the correct value of H=0.6
+#Calculating relative error
 Tib_SS2_low<- Tib_SS2_low %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 Tib_SS2_high <-Tib_SS2_high  %>% 
-        mutate(error_CO2 = abs(CO2 - CO2[height == 0.6]) / mean(CO2) * 100 * ifelse(CO2-CO2[height == 0.6] < 0, -1, 1),
-               error_CH4 = abs(CH4 - CH4[height == 0.6]) / mean(CH4) * 100 * ifelse(CH4-CH4[height == 0.6] < 0, -1, 1),
-               error_NH3 = abs(NH3 - NH3[height == 0.6]) / mean(NH3) * 100 * ifelse(NH3-NH3[height == 0.6] < 0, -1, 1))
+        mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
+               error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
 
 
 ########### Calculating Mixing ratios ###############
@@ -240,17 +235,7 @@ FTIR_input <- FTIR_input %>%
         mutate(GC_ratio = round(CH4/NH3, 2))
 
 
-#Plotting CH4/NH3 Mixing ratios at different heights
-ggline(FTIR_input, x="height", y="GC_ratio",
-       add = "mean_se",
-       shape = 11,
-       point.size = 1.5,
-       width=1.5)+
-        theme_bw() + theme(legend.position="top")+
-        xlab("Height  (meters)")+
-        ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
-
-#With Sampling location information 
+#Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 11,
@@ -261,7 +246,7 @@ ggline(FTIR_input, x="height", y="GC_ratio",
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
 
-#Without Wind speed information 
+#With Wind speed information 
 ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 11,
@@ -283,10 +268,14 @@ anova(aov(GC_ratio~height, data=FTIR_input))
 anova(aov(GC_ratio~height, data=FTIR_SS1))
 anova(aov(GC_ratio~height, data=FTIR_SS2))
 
+kruskal.test(GC_ratio~height, data=FTIR_input)
+kruskal.test(GC_ratio~height, data=FTIR_SS1)
+kruskal.test(GC_ratio~height, data=FTIR_SS2)
+
 ######Regression  for Mixing ratios####
-summary(lm(GC_ratio~height, data=FTIR_input))
-summary(lm(GC_ratio~height, data=FTIR_SS1))
-summary(lm(GC_ratio~height, data=FTIR_SS2))
+summary(lm(GC_ratio~height*Samp_loc*wd_speed, data=FTIR_input))
+summary(lm(GC_ratio~height*wd_speed, data=FTIR_SS1))
+summary(lm(GC_ratio~height*wd_speed, data=FTIR_SS2))
 
 ####Coef. of Var of each gas at each height####
 Group_stats <- FTIR_input %>% group_by(height) %>% 
