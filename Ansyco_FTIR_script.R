@@ -125,7 +125,7 @@ cowplot::plot_grid(plot2a, plot2b, plot2c,  ncol = 3, align = "h", axis = "tb", 
 
 #Alternative
 # combine the three plots horizontally with shared legend at top
-gridExtra::grid.arrange(arrangeGrob(plot1a, plot1b, plot1c, ncol=3, widths=c(1,1,1)))
+#gridExtra::grid.arrange(arrangeGrob(plot2a, plot2b, plot2c, ncol=3, widths=c(1,1,1)))
 
 # Save the combined plot as a PDF file
 ggsave("myplot2.pdf", width = 12, height = 3)
@@ -258,7 +258,7 @@ FTIR_input <- FTIR_input %>%
 
 
 #Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
-ggline(FTIR_input, x="height", y="GC_ratio",
+plot3a <- ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 11,
        point.size = 1.5,
@@ -269,7 +269,7 @@ ggline(FTIR_input, x="height", y="GC_ratio",
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
 
 #With Wind speed information 
-ggline(FTIR_input, x="height", y="GC_ratio",
+plot3b <- ggline(FTIR_input, x="height", y="GC_ratio",
        add = "mean_se",
        shape = 11,
        point.size = 1.5,
@@ -281,6 +281,17 @@ ggline(FTIR_input, x="height", y="GC_ratio",
         theme_bw() + theme(legend.position="False")+
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
+
+#Saving graphs
+# Combine the three plots horizontally
+cowplot::plot_grid(plot3a, plot3b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+
+#Alternative
+# combine the three plots horizontally with shared legend at top
+#gridExtra::grid.arrange(arrangeGrob(plot3a, plot3b, ncol=2, widths=c(1,1)))
+
+# Save the combined plot as a PDF file
+ggsave("myplot3.pdf", width = 8, height = 3)
 
 ######ANOVA for Mixing ratios#####
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
