@@ -3,6 +3,8 @@ getwd()
 library(tidyverse)
 library(psych)
 library(ggplot2)
+library(cowplot)
+library(gridExtra)
 library(dplyr)
 library(ggpubr)
 library(writexl)
@@ -26,44 +28,56 @@ FTIR_input$wd_cardinals <- as.factor(FTIR_input$wd_cardinals)
 
 ########### DATA Visualization 1 (ggline::ggpubr) ###############
 #CO2 at different heights
-ggline(FTIR_input, x="height", y="CO2",
+plot1a <- ggline(FTIR_input, x="height", y="CO2",
        add = "mean_se",
        shape = 2,
        point.size = 1.5,
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
-        theme_bw() + theme(legend.position="False")+
+        theme_bw() +
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
 
-#NH3 at different heights
-ggline(FTIR_input, x="height", y="NH3",
-       add = "mean_se",
-       shape = 21,
-       point.size = 1.5,
-       facet.by ="Samp_loc",
-       width=0.5,
-       position = position_dodge(w=0.15))+ theme_bw()+
-        theme(legend.position="False")+
-        xlab("Height  (meters)")+
-        ylab("NH3  (ppm)")
-
 #CH4 at different heights
-ggline(FTIR_input, x="height", y="CH4",
-       add = "mean_se",
-       shape = 7,
-       point.size = 1.5,
-       facet.by ="Samp_loc",
-       width=0.5,
-       position = position_dodge(w=0.15))+ theme_bw()+
-        theme(legend.position="False")+
+plot1b <-ggline(FTIR_input, x="height", y="CH4",
+                add = "mean_se",
+                shape = 7,
+                point.size = 1.5,
+                facet.by ="Samp_loc",
+                width=0.5,
+                position = position_dodge(w=0.15))+
+        theme_bw()+
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
 
+#NH3 at different heights
+plot1c <-ggline(FTIR_input, x="height", y="NH3",
+                add = "mean_se",
+                shape = 21,
+                point.size = 1.5,
+                facet.by ="Samp_loc",
+                width=0.5,
+                position = position_dodge(w=0.15))+ theme_bw()+
+        xlab("Height  (meters)")+
+        ylab("NH3  (ppm)")
+
+
+# Saving graphs 
+# Combine the three plots horizontally
+cowplot::plot_grid(plot1a, plot1b, plot1c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
+
+#Alternative
+# combine the three plots horizontally with shared legend at top
+gridExtra::grid.arrange(arrangeGrob(plot1a, plot1b, plot1c, ncol=3, widths=c(1,1,1)))
+
+# Save the combined plot as a PDF file
+ggsave("myplot1.pdf", width = 12, height = 3)
+
+
 ########### DATA Visualization 2 (ggline::ggpubr) ###############
 #CO2 at different speeds
-ggline(FTIR_input, x="height", y="CO2",
+plot2a <- ggline(FTIR_input, x="height", y="CO2",
        add = "mean_se",
        shape = 2,
        point.size = 1.5,
@@ -76,22 +90,8 @@ ggline(FTIR_input, x="height", y="CO2",
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
 
-#NH3 at different speeds
-ggline(FTIR_input, x="height", y="NH3",
-       add = "mean_se",
-       shape = 21,
-       point.size = 1.5,
-       color ="wd_speed",
-       facet.by ="Samp_loc",
-       width=0.5,
-       position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
-        theme_bw()+ theme(legend.position="False")+
-        xlab("Height  (meters)")+
-        ylab("NH3  (ppm)")
-
 #CH4 at different speeds
-ggline(FTIR_input, x="height", y="CH4",
+plot2b <- ggline(FTIR_input, x="height", y="CH4",
        add = "mean_se",
        shape = 7,
        point.size = 1.5,
@@ -104,9 +104,31 @@ ggline(FTIR_input, x="height", y="CH4",
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
 
+#NH3 at different speeds
+plot2c <- ggline(FTIR_input, x="height", y="NH3",
+       add = "mean_se",
+       shape = 21,
+       point.size = 1.5,
+       color ="wd_speed",
+       facet.by ="Samp_loc",
+       width=0.5,
+       position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
+        theme_bw()+ theme(legend.position="False")+
+        xlab("Height  (meters)")+
+        ylab("NH3  (ppm)")
 
-########### Saving graphs (ggsave::ggplot2) ###############
-#ggsave("plots.png", plot = p1, dpi = 300, width = 8, height = 6, units = "in", device = "png")
+
+#Saving graphs
+# Combine the three plots horizontally
+cowplot::plot_grid(plot2a, plot2b, plot2c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
+
+#Alternative
+# combine the three plots horizontally with shared legend at top
+gridExtra::grid.arrange(arrangeGrob(plot1a, plot1b, plot1c, ncol=3, widths=c(1,1,1)))
+
+# Save the combined plot as a PDF file
+ggsave("myplot2.pdf", width = 12, height = 3)
 
 
 ########### ANOVA & Kruskal Modeling ###############
@@ -306,5 +328,4 @@ qqnorm(FTIR_input$NH3)
 
 # check number of observations for each wind speed level
 #table(FTIR_input$wd_speed)
-
 
