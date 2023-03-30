@@ -327,7 +327,7 @@ print(CV)
 
 
 ######## Distribution of Data###########
-qqnorm(FTIR_input$NH3)
+qqline(FTIR_input$NH3, col = "red")
 
 
 
