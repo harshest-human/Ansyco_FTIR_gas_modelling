@@ -294,7 +294,7 @@ print(CV)
 
 
 ######## Distribution of Data###########
-#qqnorm(FTIR_input$NH3)
+qqnorm(FTIR_input$NH3)
 
 
 
