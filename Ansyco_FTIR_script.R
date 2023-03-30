@@ -58,7 +58,8 @@ plot1c <-ggline(FTIR_input, x="height", y="NH3",
                 point.size = 1.5,
                 facet.by ="Samp_loc",
                 width=0.5,
-                position = position_dodge(w=0.15))+ theme_bw()+
+                position = position_dodge(w=0.15))+ 
+        theme_bw()+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
 
@@ -69,7 +70,16 @@ cowplot::plot_grid(plot1a, plot1b, plot1c,  ncol = 3, align = "h", axis = "tb", 
 
 #Alternative
 # combine the three plots horizontally with shared legend at top
-gridExtra::grid.arrange(arrangeGrob(plot1a, plot1b, plot1c, ncol=3, widths=c(1,1,1)))
+grid.arrange(
+  arrangeGrob(
+    plot1a + theme(legend.position = "none"),
+    plot1b + theme(legend.position = "none"),
+    nrow = 1
+  ),
+  plot1c,
+  nrow = 2,
+  heights = c(3, 1)
+)
 
 # Save the combined plot as a PDF file
 ggsave("myplot1.pdf", width = 12, height = 3)
