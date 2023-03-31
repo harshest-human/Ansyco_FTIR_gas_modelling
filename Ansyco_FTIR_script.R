@@ -262,13 +262,14 @@ Tib_SS2_high <-Tib_SS2_high  %>%
 
 
 ########### Calculating Mixing ratios ###############
-FTIR_input <- FTIR_input %>%
+##CH4/NH3 ratio
+CH_NH_data <- FTIR_input %>%
         group_by(height) %>%
-        mutate(GC_ratio = round(CH4/NH3, 2))
+        mutate(CH_NH_ratio = round(CH4/NH3, 2))
 
 
 #Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
-plot3a <- ggline(FTIR_input, x="height", y="GC_ratio",
+plot3a <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
        add = "mean_se",
        shape = 11,
        point.size = 1.5,
@@ -279,7 +280,7 @@ plot3a <- ggline(FTIR_input, x="height", y="GC_ratio",
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
 
 #With Wind speed information 
-plot3b <- ggline(FTIR_input, x="height", y="GC_ratio",
+plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
        add = "mean_se",
        shape = 11,
        point.size = 1.5,
@@ -295,30 +296,64 @@ plot3b <- ggline(FTIR_input, x="height", y="GC_ratio",
 #Saving graphs
 # Combine the three plots horizontally
 cowplot::plot_grid(plot3a, plot3b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
-
-#Alternative
-# combine the three plots horizontally with shared legend at top
-#gridExtra::grid.arrange(arrangeGrob(plot3a, plot3b, ncol=2, widths=c(1,1)))
-
 # Save the combined plot as a PDF file
 ggsave("myplot3.pdf", width = 8, height = 3)
 
+########### Calculating Mixing ratios ###############
+##CO2/CH4 ratio
+CO_CH_data <- FTIR_input %>%
+        group_by(height) %>%
+        mutate(CO_CH_ratio = round(CO2/CH4, 2))
+
+
+#Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
+plot4a <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
+                 add = "mean_se",
+                 shape = 11,
+                 point.size = 1.5,
+                 width=1.5,
+                 facet.by ="Samp_loc")+
+        theme_bw() + theme(legend.position="False")+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CO[2]/CH[4]))))  
+
+#With Wind speed information 
+plot4b <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
+                 add = "mean_se",
+                 shape = 11,
+                 point.size = 1.5,
+                 facet.by ="Samp_loc",
+                 color ="wd_speed",
+                 width=1.5,
+                 position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkorchid4","burlywood4"))+
+        theme_bw() + theme(legend.position="left")+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
+
+#Saving graphs
+# Combine the three plots horizontally
+cowplot::plot_grid(plot4a, plot4b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+# Save the combined plot as a PDF file
+ggsave("myplot4.pdf", width = 8, height = 3)
+
+
 ######ANOVA for Mixing ratios#####
-FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
-FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
+FTIR_SS1 <- CO_CH_data %>% filter(Samp_loc == "SS1")
+FTIR_SS2 <- CO_CH_data %>% filter(Samp_loc == "SS2")
 
-anova(aov(GC_ratio~height, data=FTIR_input))
-anova(aov(GC_ratio~height, data=FTIR_SS1))
-anova(aov(GC_ratio~height, data=FTIR_SS2))
+anova(aov(CO_CH_ratio~height, data=CO_CH_data))
+anova(aov(CO_CH_ratio~height, data=FTIR_SS1))
+anova(aov(CO_CH_ratio~height, data=FTIR_SS2))
 
-kruskal.test(GC_ratio~height, data=FTIR_input)
-kruskal.test(GC_ratio~height, data=FTIR_SS1)
-kruskal.test(GC_ratio~height, data=FTIR_SS2)
+kruskal.test(CO_CH_ratio~height, data=CO_CH_data)
+kruskal.test(CO_CH_ratio~height, data=FTIR_SS1)
+kruskal.test(CO_CH_ratio~height, data=FTIR_SS2)
 
 ######Regression  for Mixing ratios####
-summary(lm(GC_ratio~height*Samp_loc*wd_speed, data=FTIR_input))
-summary(lm(GC_ratio~height*wd_speed, data=FTIR_SS1))
-summary(lm(GC_ratio~height*wd_speed, data=FTIR_SS2))
+summary(lm(CO_CH_ratio~height*Samp_loc*wd_speed, data=CO_CH_data))
+summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS1))
+summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS2))
 
 ####Coef. of Var of each gas at each height####
 Group_stats <- FTIR_input %>% group_by(height) %>% 
@@ -349,4 +384,5 @@ qqline(FTIR_input$NH3, col = "red")
 
 # check number of observations for each wind speed level
 #table(FTIR_input$wd_speed)
+
 
