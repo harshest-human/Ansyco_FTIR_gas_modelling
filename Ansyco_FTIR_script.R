@@ -8,6 +8,7 @@ library(gridExtra)
 library(dplyr)
 library(ggpubr)
 library(writexl)
+library(readr)
 
 ########### FTIR DATA IMPORT ###############
 FTIR_raw <- read.delim("FTIR_final_data.txt") 
@@ -223,6 +224,8 @@ Tib_SS1 <- Tib_SS1 %>%
         mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
                error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
                error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
+
+readr::write_csv(Tib_SS1, "Tib_SS1.csv")
 
 Tib_SS2 <- Tib_SS2 %>% 
         mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
