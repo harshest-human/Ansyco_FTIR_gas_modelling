@@ -35,9 +35,13 @@ plot1a <- ggline(FTIR_input, x="height", y="CO2",
        facet.by ="Samp_loc",
        width=0.5,
        position = position_dodge(w=0.15))+
-        theme_bw() +
+        theme_bw()+theme(legend.position="False",
+                         axis.text = element_text(size=12),
+                         axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
+
+ggsave("plot1a.pdf", width = 8, height = 4)
 
 #CH4 at different heights
 plot1b <-ggline(FTIR_input, x="height", y="CH4",
@@ -47,9 +51,13 @@ plot1b <-ggline(FTIR_input, x="height", y="CH4",
                 facet.by ="Samp_loc",
                 width=0.5,
                 position = position_dodge(w=0.15))+
-        theme_bw()+
+        theme_bw()+theme(legend.position="False",
+                         axis.text = element_text(size=12),
+                         axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
+
+ggsave("plot1b.pdf", width = 8, height = 4)
 
 #NH3 at different heights
 plot1c <-ggline(FTIR_input, x="height", y="NH3",
@@ -59,30 +67,24 @@ plot1c <-ggline(FTIR_input, x="height", y="NH3",
                 facet.by ="Samp_loc",
                 width=0.5,
                 position = position_dodge(w=0.15))+ 
-        theme_bw()+
+        theme_bw()+theme(legend.position="False",
+                         axis.text = element_text(size=12),
+                         axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
 
+ggsave("plot1c.pdf", width = 8, height = 4)
 
 # Saving graphs 
 # Combine the three plots horizontally
-cowplot::plot_grid(plot1a, plot1b, plot1c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
+#cowplot::plot_grid(plot1a, plot1b, plot1c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
 
 #Alternative
 # combine the three plots horizontally with shared legend at top
-grid.arrange(
-  arrangeGrob(
-    plot1a + theme(legend.position = "none"),
-    plot1b + theme(legend.position = "none"),
-    nrow = 1
-  ),
-  plot1c,
-  nrow = 2,
-  heights = c(3, 1)
-)
+#grid.arrange(arrangeGrob(plot1a + theme(legend.position = "none"),plot1b + theme(legend.position = "none"),nrow = 1),plot1c,nrow = 2,heights = c(3, 1))
 
 # Save the combined plot as a PDF file
-ggsave("myplot1.pdf", width = 12, height = 3)
+#ggsave("myplot1.pdf", width = 12, height = 3)
 
 
 ########### DATA Visualization 2 (ggline::ggpubr) ###############
@@ -96,9 +98,13 @@ plot2a <- ggline(FTIR_input, x="height", y="CO2",
        width=0.5,
        position = position_dodge(w=0.15))+
         scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
-        theme_bw()+theme(legend.position="False")+
+        theme_bw()+theme(legend.position="False",
+                         axis.text = element_text(size=12),
+                         axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("CO2  (ppm)")
+
+ggsave("plot2a.pdf", width = 8, height = 4)
 
 #CH4 at different speeds
 plot2b <- ggline(FTIR_input, x="height", y="CH4",
@@ -110,9 +116,13 @@ plot2b <- ggline(FTIR_input, x="height", y="CH4",
        width=0.5,
        position = position_dodge(w=0.15))+
         scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
-        theme_bw()+ theme(legend.position="False")+
+        theme_bw()+ theme(legend.position="False",
+                          axis.text = element_text(size=12),
+                          axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("CH4  (ppm)")
+
+ggsave("plot2b.pdf", width = 8, height = 4)
 
 #NH3 at different speeds
 plot2c <- ggline(FTIR_input, x="height", y="NH3",
@@ -124,25 +134,28 @@ plot2c <- ggline(FTIR_input, x="height", y="NH3",
        width=0.5,
        position = position_dodge(w=0.15))+
         scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
-        theme_bw()+ theme(legend.position="False")+
+        theme_bw()+ theme(legend.position="False",
+                          axis.text = element_text(size=12),
+                          axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab("NH3  (ppm)")
 
+ggsave("plot2c.pdf", width = 8, height = 4)
 
 #Saving graphs
 # Combine the three plots horizontally
-cowplot::plot_grid(plot2a, plot2b, plot2c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
+#cowplot::plot_grid(plot2a, plot2b, plot2c,  ncol = 3, align = "h", axis = "tb", rel_widths = c(1, 1, 1))
 
 #Alternative
 # combine the three plots horizontally with shared legend at top
 #gridExtra::grid.arrange(arrangeGrob(plot2a, plot2b, plot2c, ncol=3, widths=c(1,1,1)))
 
 # Save the combined plot as a PDF file
-ggsave("myplot2.pdf", width = 12, height = 3)
+#ggsave("myplot2.pdf", width = 12, height = 3)
 
 
 ########### ANOVA & Kruskal Modeling ###############
-###### W/O SS #####
+###### W/O SS 
 #ANOVA 
 anova(aov(CO2~height*Samp_loc, data=FTIR_input))
 anova(aov(CH4~height*Samp_loc, data=FTIR_input))
@@ -153,7 +166,7 @@ kruskal.test(CO2 ~ Samp_loc, FTIR_input)
 kruskal.test(CH4 ~ Samp_loc, FTIR_input)
 kruskal.test(NH3 ~ Samp_loc, FTIR_input)
 
-###### SS1 #####
+###### SS1 
 #ANOVA SS1
 FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
 anova(aov(CO2~height*wd_speed, data=FTIR_SS1))
@@ -165,7 +178,7 @@ kruskal.test(CO2 ~ wd_speed, FTIR_SS1)
 kruskal.test(CH4 ~ wd_speed, FTIR_SS1)
 kruskal.test(NH3 ~ wd_speed, FTIR_SS1)
 
-###### SS2 #####
+###### SS2
 #ANOVA SS2
 FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
 anova(aov(CO2~height*wd_speed, data=FTIR_SS2))
@@ -275,9 +288,13 @@ plot3a <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
        point.size = 1.5,
        width=1.5,
        facet.by ="Samp_loc")+
-        theme_bw() + theme(legend.position="False")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
+
+ggsave("plot3a.pdf", width = 8, height = 4)
 
 #With Wind speed information 
 plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
@@ -289,15 +306,20 @@ plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
        width=1.5,
        position = position_dodge(w=0.15))+
         scale_color_manual(values = c("darkorchid4","burlywood4"))+
-        theme_bw() + theme(legend.position="False")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
 
+ggsave("plot3b.pdf", width = 8, height = 4)
+
+
 #Saving graphs
 # Combine the three plots horizontally
-cowplot::plot_grid(plot3a, plot3b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+#cowplot::plot_grid(plot3a, plot3b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
 # Save the combined plot as a PDF file
-ggsave("myplot3.pdf", width = 8, height = 3)
+#ggsave("myplot3.pdf", width = 8, height = 3)
 
 ########### Calculating Mixing ratios ###############
 ##CO2/CH4 ratio
@@ -313,9 +335,13 @@ plot4a <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
                  point.size = 1.5,
                  width=1.5,
                  facet.by ="Samp_loc")+
-        theme_bw() + theme(legend.position="False")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
-        ylab(expression(Ratio ~ (bar(CO[2]/CH[4]))))  
+        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
+
+ggsave("plot4a.pdf", width = 8, height = 4)
 
 #With Wind speed information 
 plot4b <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
@@ -327,15 +353,19 @@ plot4b <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
                  width=1.5,
                  position = position_dodge(w=0.15))+
         scale_color_manual(values = c("darkorchid4","burlywood4"))+
-        theme_bw() + theme(legend.position="left")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
         xlab("Height  (meters)")+
         ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
 
+ggsave("plot4b.pdf", width = 8, height = 4)
+
 #Saving graphs
 # Combine the three plots horizontally
-cowplot::plot_grid(plot4a, plot4b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+#cowplot::plot_grid(plot4a, plot4b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
 # Save the combined plot as a PDF file
-ggsave("myplot4.pdf", width = 8, height = 3)
+#ggsave("myplot4.pdf", width = 8, height = 3)
 
 
 ######ANOVA for Mixing ratios#####
@@ -356,23 +386,23 @@ summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS1))
 summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS2))
 
 ####Coef. of Var of each gas at each height####
-Group_stats <- FTIR_input %>% group_by(height) %>% 
-        summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
-                  CH4_mean = mean(CH4), CH4_sd = sd(CH4),
-                  NH3_mean = mean(NH3), NH3_sd = sd(NH3),
-                  GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
+#Group_stats <- FTIR_input %>% group_by(height) %>% 
+        #summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
+                  #CH4_mean = mean(CH4), CH4_sd = sd(CH4),
+                  #NH3_mean = mean(NH3), NH3_sd = sd(NH3),
+                  #GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
 
 #Coeffecient of Variation of CO2, CH4, NH3 at each height
-CV <- Group_stats %>%
-        group_by(height) %>%
-        mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
-               cv_CH4 = ((CH4_sd/CH4_mean)*100),
-               cv_NH3 = ((NH3_sd/NH3_mean)*100))
-print(CV)
+#CV <- Group_stats %>%
+        #group_by(height) %>%
+        #mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
+               #cv_CH4 = ((CH4_sd/CH4_mean)*100),
+               #cv_NH3 = ((NH3_sd/NH3_mean)*100))
+#print(CV)
 
 
 ######## Distribution of Data###########
-qqline(FTIR_input$NH3, col = "red")
+#qqline(FTIR_input$NH3, col = "red")
 
 
 
@@ -384,5 +414,7 @@ qqline(FTIR_input$NH3, col = "red")
 
 # check number of observations for each wind speed level
 #table(FTIR_input$wd_speed)
+
+
 
 
