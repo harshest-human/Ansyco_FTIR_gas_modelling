@@ -209,28 +209,33 @@ summary(glm(CH4~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
 summary(glm(NH3~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log"))) 
 
 ########### Relative errors###############
-Tib_SS1 <- FTIR_SS1 %>% group_by(height) %>%
-        summarise(CO2=mean(CO2),
-                  CH4=mean(CH4),
-                  NH3=mean(NH3))
-
-Tib_SS2 <- FTIR_SS2 %>% group_by(height) %>%
-        summarise(CO2=mean(CO2),
-                  CH4=mean(CH4),
-                  NH3=mean(NH3))
-
-#Calculating relative error
-Tib_SS1 <- Tib_SS1 %>% 
+Tib_SS1 <- FTIR_input %>% 
+        filter(Samp_loc == "SS1") %>%
+        group_by(height) %>%
+        summarise(CO2 = mean(CO2),
+                  CH4 = mean(CH4),
+                  NH3 = mean(NH3)) %>% 
         mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
                error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
-               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1)) %>% 
+        mutate(across(c(CO2, CH4, NH3, error_CO2, error_CH4, error_NH3), round, 2))
 
 readr::write_csv(Tib_SS1, "Tib_SS1.csv")
 
-Tib_SS2 <- Tib_SS2 %>% 
+
+Tib_SS2 <- FTIR_input %>% 
+        filter(Samp_loc == "SS2") %>%
+        group_by(height) %>%
+        summarise(CO2 = mean(CO2),
+                  CH4 = mean(CH4),
+                  NH3 = mean(NH3)) %>% 
         mutate(error_CO2 = abs(CO2 - mean(CO2)) / mean(CO2) * 100 * ifelse(CO2-mean(CO2) < 0, -1, 1),
                error_CH4 = abs(CH4 - mean(CH4)) / mean(CH4) * 100 * ifelse(CH4-mean(CH4) < 0, -1, 1),
-               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1))
+               error_NH3 = abs(NH3 - mean(NH3)) / mean(NH3) * 100 * ifelse(NH3-mean(NH3) < 0, -1, 1)) %>% 
+        mutate(across(c(CO2, CH4, NH3, error_CO2, error_CH4, error_NH3), round, 2))
+
+readr::write_csv(Tib_SS2, "Tib_SS2.csv")
+
 
 ########### Relative errors SS1###############
 Tib_SS1_low <- FTIR_SS1 %>% filter(wd_speed == "low") %>% group_by(height) %>%
