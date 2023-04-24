@@ -212,13 +212,13 @@ summary(glm(NH3~height*wd_speed, data=FTIR_SS2, family = Gamma(link = "log")))
 Tib_SS1 <- FTIR_input %>% 
         filter(Samp_loc == "SS1") %>%
         group_by(height) %>%
-        summarise(meanCO2 = mean(CO2),
-                  meanCH4 = mean(CH4),
-                  meanNH3 = mean(NH3)) %>% 
-        mutate(errorCO2 = abs(meanCO2 - mean(meanCO2)) / mean(meanCO2) * 100 * ifelse(meanCO2-mean(meanCO2) < 0, -1, 1),
-               errorCH4 = abs(meanCH4 - mean(meanCH4)) / mean(meanCH4) * 100 * ifelse(meanCH4-mean(meanCH4) < 0, -1, 1),
-               errorNH3 = abs(meanNH3 - mean(meanNH3)) / mean(meanNH3) * 100 * ifelse(meanNH3-mean(meanNH3) < 0, -1, 1)) %>% 
-        mutate(across(c(meanCO2, meanCH4, meanNH3, errorCO2, errorCH4, errorNH3), round, 2))
+        summarise(meanCO_2 = mean(CO2),
+                  meanCH_4 = mean(CH4),
+                  meanNH_3 = mean(NH3)) %>% 
+        mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2)) / mean(meanCO_2) * 100 * ifelse(meanCO_2-mean(meanCO_2) < 0, -1, 1),
+               errorCH_4 = abs(meanCH_4 - mean(meanCH_4)) / mean(meanCH_4) * 100 * ifelse(meanCH_4-mean(meanCH_4) < 0, -1, 1),
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3)) / mean(meanNH_3) * 100 * ifelse(meanNH_3-mean(meanNH_3) < 0, -1, 1)) %>% 
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2))
 
 readr::write_csv(Tib_SS1, "Tib_SS1.csv")
 
@@ -226,13 +226,13 @@ readr::write_csv(Tib_SS1, "Tib_SS1.csv")
 Tib_SS2 <- FTIR_input %>% 
         filter(Samp_loc == "SS2") %>%
         group_by(height) %>%
-        summarise(meanCO2 = mean(CO2),
-                  meanCH4 = mean(CH4),
-                  meanNH3 = mean(NH3)) %>% 
-        mutate(errorCO2 = abs(meanCO2 - mean(meanCO2)) / mean(meanCO2) * 100 * ifelse(meanCO2-mean(meanCO2) < 0, -1, 1),
-               errorCH4 = abs(meanCH4 - mean(meanCH4)) / mean(meanCH4) * 100 * ifelse(meanCH4-mean(meanCH4) < 0, -1, 1),
-               errorNH3 = abs(meanNH3 - mean(meanNH3)) / mean(meanNH3) * 100 * ifelse(meanNH3-mean(meanNH3) < 0, -1, 1)) %>% 
-        mutate(across(c(meanCO2, meanCH4, meanNH3, errorCO2, errorCH4, errorNH3), round, 2))
+        summarise(meanCO_2 = mean(CO2),
+                  meanCH_4 = mean(CH4),
+                  meanNH_3 = mean(NH3)) %>% 
+        mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2)) / mean(meanCO_2) * 100 * ifelse(meanCO_2-mean(meanCO_2) < 0, -1, 1),
+               errorCH_4 = abs(meanCH_4 - mean(meanCH_4)) / mean(meanCH_4) * 100 * ifelse(meanCH_4-mean(meanCH_4) < 0, -1, 1),
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3)) / mean(meanNH_3) * 100 * ifelse(meanNH_3-mean(meanNH_3) < 0, -1, 1)) %>% 
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2))
 
 readr::write_csv(Tib_SS2, "Tib_SS2.csv")
 
@@ -241,13 +241,13 @@ readr::write_csv(Tib_SS2, "Tib_SS2.csv")
 Tib_SS1_low <- FTIR_input %>% 
         filter(Samp_loc == "SS1", wd_speed == "low") %>%
         group_by(height) %>%
-        summarise(meanCO2 = mean(CO2),
-                  meanCH4 = mean(CH4),
-                  meanNH3 = mean(NH3)) %>% 
-        mutate(errorCO2 = abs(meanCO2 - mean(meanCO2)) / mean(meanCO2) * 100 * ifelse(meanCO2-mean(meanCO2) < 0, -1, 1),
-               errorCH4 = abs(meanCH4 - mean(meanCH4)) / mean(meanCH4) * 100 * ifelse(meanCH4-mean(meanCH4) < 0, -1, 1),
-               errorNH3 = abs(meanNH3 - mean(meanNH3)) / mean(meanNH3) * 100 * ifelse(meanNH3-mean(meanNH3) < 0, -1, 1)) %>% 
-        mutate(across(c(meanCO2, meanCH4, meanNH3, errorCO2, errorCH4, errorNH3), round, 2))
+        summarise(meanCO_2 = mean(CO2),
+                  meanCH_4 = mean(CH4),
+                  meanNH_3 = mean(NH3)) %>% 
+        mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2)) / mean(meanCO_2) * 100 * ifelse(meanCO_2-mean(meanCO_2) < 0, -1, 1),
+               errorCH_4 = abs(meanCH_4 - mean(meanCH_4)) / mean(meanCH_4) * 100 * ifelse(meanCH_4-mean(meanCH_4) < 0, -1, 1),
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3)) / mean(meanNH_3) * 100 * ifelse(meanNH_3-mean(meanNH_3) < 0, -1, 1)) %>% 
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2))
 
 
 readr::write_csv(Tib_SS1_low, "Tib_SS1_low.csv")
@@ -255,13 +255,13 @@ readr::write_csv(Tib_SS1_low, "Tib_SS1_low.csv")
 Tib_SS1_high <- FTIR_input %>% 
         filter(Samp_loc == "SS1", wd_speed == "high") %>%
         group_by(height) %>%
-        summarise(meanCO2 = mean(CO2),
-                  meanCH4 = mean(CH4),
-                  meanNH3 = mean(NH3)) %>% 
-        mutate(errorCO2 = abs(meanCO2 - mean(meanCO2)) / mean(meanCO2) * 100 * ifelse(meanCO2-mean(meanCO2) < 0, -1, 1),
-               errorCH4 = abs(meanCH4 - mean(meanCH4)) / mean(meanCH4) * 100 * ifelse(meanCH4-mean(meanCH4) < 0, -1, 1),
-               errorNH3 = abs(meanNH3 - mean(meanNH3)) / mean(meanNH3) * 100 * ifelse(meanNH3-mean(meanNH3) < 0, -1, 1)) %>% 
-        mutate(across(c(meanCO2, meanCH4, meanNH3, errorCO2, errorCH4, errorNH3), round, 2))
+        summarise(meanCO_2 = mean(CO2),
+                  meanCH_4 = mean(CH4),
+                  meanNH_3 = mean(NH3)) %>% 
+        mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2)) / mean(meanCO_2) * 100 * ifelse(meanCO_2-mean(meanCO_2) < 0, -1, 1),
+               errorCH_4 = abs(meanCH_4 - mean(meanCH_4)) / mean(meanCH_4) * 100 * ifelse(meanCH_4-mean(meanCH_4) < 0, -1, 1),
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3)) / mean(meanNH_3) * 100 * ifelse(meanNH_3-mean(meanNH_3) < 0, -1, 1)) %>% 
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2))
 
 readr::write_csv(Tib_SS1_high, "Tib_SS1_high.csv")
 
