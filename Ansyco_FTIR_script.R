@@ -217,7 +217,8 @@ Tib_SS1 <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2))
 
 readr::write_csv(Tib_SS1, "Tib_SS1.csv")
 
@@ -230,7 +231,8 @@ Tib_SS2 <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2)) 
 
 readr::write_csv(Tib_SS2, "Tib_SS2.csv")
 
@@ -244,7 +246,8 @@ Tib_SS1_low <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2)) 
 
 readr::write_csv(Tib_SS1_low, "Tib_SS1_low.csv")
 
@@ -257,7 +260,8 @@ Tib_SS1_high <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2)) 
 
 readr::write_csv(Tib_SS1_high, "Tib_SS1_high.csv")
 
@@ -270,7 +274,8 @@ Tib_SS2_low <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2)) 
 
 readr::write_csv(Tib_SS2_low, "Tib_SS2_low.csv")
 
@@ -283,7 +288,8 @@ Tib_SS2_high <- FTIR_input %>%
                   meanNH_3 = mean(NH3)) %>% 
         mutate(errorCO_2 = abs(meanCO_2 - mean(meanCO_2[height == 0.6])) / mean(meanCO_2[height == 0.6]) * 100 * sign(meanCO_2 - mean(meanCO_2[height == 0.6])),
                errorCH_4 = abs(meanCH_4 - mean(meanCH_4[height == 0.6])) / mean(meanCH_4[height == 0.6]) * 100 * sign(meanCH_4 - mean(meanCH_4[height == 0.6])),
-               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6]))) 
+               errorNH_3 = abs(meanNH_3 - mean(meanNH_3[height == 0.6])) / mean(meanNH_3[height == 0.6]) * 100 * sign(meanNH_3 - mean(meanNH_3[height == 0.6])))%>%
+        mutate(across(c(meanCO_2, meanCH_4, meanNH_3, errorCO_2, errorCH_4, errorNH_3), round, 2)) 
 
 readr::write_csv(Tib_SS2_high, "Tib_SS2_high.csv")
 
