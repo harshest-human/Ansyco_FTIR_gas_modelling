@@ -421,8 +421,15 @@ summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS2))
 
 
 ######## Distribution of Data###########
-#qqline(FTIR_input$NH3, col = "red")
+par(mfrow=c(1,3)) # set plot layout to one row and three columns
+qqnorm(FTIR_input$NH3, col = "blue4", main = expression(paste(NH[3])))
+qqline(FTIR_input$NH3, col = "blue4")
+qqnorm(FTIR_input$CH4, col = "red3", main = expression(paste(CH[4])))
+qqline(FTIR_input$CH4, col = "red3")
+qqnorm(FTIR_input$CO2, col = "green4", main = expression(paste(CO[2])))
+qqline(FTIR_input$CO2, col = "green4")
 
+#ggsave will not work... SO SAVE THIS GRAPH BY EXPORTING AS PDF
 
 
 ######EXTRAS: Create the speed column using cut()####
