@@ -155,37 +155,20 @@ ggsave("plot2c.pdf", width = 8, height = 4)
 #ggsave("myplot2.pdf", width = 12, height = 3)
 
 
-########### ANOVA & Kruskal Modeling ###############
+########### Krsukal-Wallis Modeling ###############
 ###### W/O SS 
-#ANOVA 
-anova(aov(CO2~height*Samp_loc, data=FTIR_input))
-anova(aov(CH4~height*Samp_loc, data=FTIR_input))
-anova(aov(NH3~height*Samp_loc, data=FTIR_input))
-
 #Kruskal 
 kruskal.test(CO2 ~ Samp_loc, FTIR_input)
 kruskal.test(CH4 ~ Samp_loc, FTIR_input)
 kruskal.test(NH3 ~ Samp_loc, FTIR_input)
 
 ###### SS1 
-#ANOVA SS1
-FTIR_SS1 <- FTIR_input %>% filter(Samp_loc == "SS1")
-anova(aov(CO2~height*wd_speed, data=FTIR_SS1))
-anova(aov(CH4~height*wd_speed, data=FTIR_SS1))
-anova(aov(NH3~height*wd_speed, data=FTIR_SS1))
-
 #Kruskal SS1
 kruskal.test(CO2 ~ wd_speed, FTIR_SS1)
 kruskal.test(CH4 ~ wd_speed, FTIR_SS1)
 kruskal.test(NH3 ~ wd_speed, FTIR_SS1)
 
 ###### SS2
-#ANOVA SS2
-FTIR_SS2 <- FTIR_input %>% filter(Samp_loc == "SS2")
-anova(aov(CO2~height*wd_speed, data=FTIR_SS2))
-anova(aov(CH4~height*wd_speed, data=FTIR_SS2))
-anova(aov(NH3~height*wd_speed, data=FTIR_SS2))
-
 #Kruskal SS2
 kruskal.test(CO2 ~ wd_speed, FTIR_SS2)
 kruskal.test(CH4 ~ wd_speed, FTIR_SS2)
@@ -291,6 +274,146 @@ Tib_SS2_low <- FTIR_input %>%
 
 readr::write_csv(Tib_SS2_low, "TibSS2low.csv")
 
+########### Calculating Mixing ratios CHNH ###############
+##CH4/NH3 ratio
+CH_NH_data <- FTIR_input %>%
+        group_by(height) %>%
+        mutate(CH_NH_ratio = round(CH4/NH3, 2))
+
+
+#Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
+plot3a <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
+       add = "mean_se",
+       shape = 11,
+       point.size = 1.5,
+       width=1.5,
+       facet.by ="Samp_loc")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3]))))  
+
+ggsave("plot3a.pdf", width = 8, height = 4)
+
+#With Wind speed information 
+plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
+       add = "mean_se",
+       shape = 11,
+       point.size = 1.5,
+       facet.by ="Samp_loc",
+       color ="wd_speed",
+       width=1.5,
+       position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkorchid4","burlywood4"))+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
+
+ggsave("plot3b.pdf", width = 8, height = 4)
+
+
+#Saving graphs
+# Combine the three plots horizontally
+#cowplot::plot_grid(plot3a, plot3b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+# Save the combined plot as a PDF file
+#ggsave("myplot3.pdf", width = 8, height = 3)
+
+########### Calculating Mixing ratios COCH ###############
+##CO2/CH4 ratio
+CO_CH_data <- FTIR_input %>%
+        group_by(height) %>%
+        mutate(CO_CH_ratio = round(CO2/CH4, 2))
+
+
+#Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
+plot4a <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
+                 add = "mean_se",
+                 shape = 11,
+                 point.size = 1.5,
+                 width=1.5,
+                 facet.by ="Samp_loc")+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
+
+ggsave("plot4a.pdf", width = 8, height = 4)
+
+#With Wind speed information 
+plot4b <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
+                 add = "mean_se",
+                 shape = 11,
+                 point.size = 1.5,
+                 facet.by ="Samp_loc",
+                 color ="wd_speed",
+                 width=1.5,
+                 position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("darkorchid4","burlywood4"))+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
+
+ggsave("plot4b.pdf", width = 8, height = 4)
+
+#Saving graphs
+# Combine the three plots horizontally
+#cowplot::plot_grid(plot4a, plot4b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
+# Save the combined plot as a PDF file
+#ggsave("myplot4.pdf", width = 8, height = 3)
+
+
+########### Krsukal-Wallis for Mixing ratios #####
+CH_NH_SS1 <- CH_NH_data %>% filter(Samp_loc == "SS1")
+CH_NH_SS2 <- CH_NH_data %>% filter(Samp_loc == "SS2")
+
+kruskal.test(CH_NH_ratio~height, data=CH_NH_data)
+kruskal.test(CH_NH_ratio~height, data=CH_NH_SS1)
+kruskal.test(CH_NH_ratio~height, data=CH_NH_SS2)
+
+######Regression  for Mixing ratios####
+summary(lm(CH_NH_ratio~height*Samp_loc*wd_speed, data=CH_NH_data))
+summary(lm(CH_NH_ratio~height*wd_speed, data=CH_NH_SS1))
+summary(lm(CH_NH_ratio~height*wd_speed, data=CH_NH_SS2))
+
+
+########### Relative errors Ratios###############
+Tib_ratio_SS1 <- CH_NH_SS1 %>% 
+        group_by(height) %>%
+        summarise(mean_ratio = mean(CH_NH_ratio)) %>% 
+        mutate(error_ratio = abs(mean_ratio - mean(mean_ratio[height == 0.6])) / mean(mean_ratio[height == 0.6]) * 100 * sign(mean_ratio - mean(mean_ratio[height == 0.6])))%>%
+        mutate(across(c(mean_ratio, error_ratio), round, 2))
+
+Tib_ratio_SS2 <- CH_NH_SS2 %>% 
+        group_by(height) %>%
+        summarise(mean_ratio = mean(CH_NH_ratio)) %>% 
+        mutate(error_ratio = abs(mean_ratio - mean(mean_ratio[height == 0.6])) / mean(mean_ratio[height == 0.6]) * 100 * sign(mean_ratio - mean(mean_ratio[height == 0.6])))%>%
+        mutate(across(c(mean_ratio, error_ratio), round, 2))
+
+
+readr::write_csv(Tib_ratio_SS1, "TibratioSS1.csv")
+readr::write_csv(Tib_ratio_SS2, "TibratioSS2.csv")
+
+####Coef. of Var of each gas at each height####
+#Group_stats <- FTIR_input %>% group_by(height) %>% 
+        #summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
+                  #CH4_mean = mean(CH4), CH4_sd = sd(CH4),
+                  #NH3_mean = mean(NH3), NH3_sd = sd(NH3),
+                  #GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
+
+#Coeffecient of Variation of CO2, CH4, NH3 at each height
+#CV <- Group_stats %>%
+        #group_by(height) %>%
+        #mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
+               #cv_CH4 = ((CH4_sd/CH4_mean)*100),
+               #cv_NH3 = ((NH3_sd/NH3_mean)*100))
+#print(CV)
+
 ########### Calculating Mixing ratios ###############
 ##CH4/NH3 ratio
 CH_NH_data <- FTIR_input %>%
@@ -338,84 +461,6 @@ ggsave("plot3b.pdf", width = 8, height = 4)
 # Save the combined plot as a PDF file
 #ggsave("myplot3.pdf", width = 8, height = 3)
 
-########### Calculating Mixing ratios ###############
-##CO2/CH4 ratio
-CO_CH_data <- FTIR_input %>%
-        group_by(height) %>%
-        mutate(CO_CH_ratio = round(CO2/NH3, 2))
-
-
-#Plotting CH4/NH3 Mixing ratios at different heights With Sampling location information 
-plot4a <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
-                 add = "mean_se",
-                 shape = 11,
-                 point.size = 1.5,
-                 width=1.5,
-                 facet.by ="Samp_loc")+
-        theme_bw() + theme(legend.position="False",
-                           axis.text = element_text(size=12),
-                           axis.title = element_text(size=12))+
-        xlab("Height  (meters)")+
-        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
-
-ggsave("plot4a.pdf", width = 8, height = 4)
-
-#With Wind speed information 
-plot4b <- ggline(CO_CH_data, x="height", y="CO_CH_ratio",
-                 add = "mean_se",
-                 shape = 11,
-                 point.size = 1.5,
-                 facet.by ="Samp_loc",
-                 color ="wd_speed",
-                 width=1.5,
-                 position = position_dodge(w=0.15))+
-        scale_color_manual(values = c("darkorchid4","burlywood4"))+
-        theme_bw() + theme(legend.position="False",
-                           axis.text = element_text(size=12),
-                           axis.title = element_text(size=12))+
-        xlab("Height  (meters)")+
-        ylab(expression(Ratio ~ (bar(CO[2]/CH[4])))) 
-
-ggsave("plot4b.pdf", width = 8, height = 4)
-
-#Saving graphs
-# Combine the three plots horizontally
-#cowplot::plot_grid(plot4a, plot4b,  ncol = 2, align = "h", axis = "tb", rel_widths = c(1, 1))
-# Save the combined plot as a PDF file
-#ggsave("myplot4.pdf", width = 8, height = 3)
-
-
-######ANOVA for Mixing ratios#####
-FTIR_SS1 <- CO_CH_data %>% filter(Samp_loc == "SS1")
-FTIR_SS2 <- CO_CH_data %>% filter(Samp_loc == "SS2")
-
-anova(aov(CO_CH_ratio~height, data=CO_CH_data))
-anova(aov(CO_CH_ratio~height, data=FTIR_SS1))
-anova(aov(CO_CH_ratio~height, data=FTIR_SS2))
-
-kruskal.test(CO_CH_ratio~height, data=CO_CH_data)
-kruskal.test(CO_CH_ratio~height, data=FTIR_SS1)
-kruskal.test(CO_CH_ratio~height, data=FTIR_SS2)
-
-######Regression  for Mixing ratios####
-summary(lm(CO_CH_ratio~height*Samp_loc*wd_speed, data=CO_CH_data))
-summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS1))
-summary(lm(CO_CH_ratio~height*wd_speed, data=FTIR_SS2))
-
-####Coef. of Var of each gas at each height####
-#Group_stats <- FTIR_input %>% group_by(height) %>% 
-        #summarize(CO2_mean = mean(CO2), CO2_sd = sd(CO2),
-                  #CH4_mean = mean(CH4), CH4_sd = sd(CH4),
-                  #NH3_mean = mean(NH3), NH3_sd = sd(NH3),
-                  #GC_mean = mean(GC_ratio), GC_sd = sd(GC_ratio))
-
-#Coeffecient of Variation of CO2, CH4, NH3 at each height
-#CV <- Group_stats %>%
-        #group_by(height) %>%
-        #mutate(cv_CO2 = ((CO2_sd/CO2_mean)*100),
-               #cv_CH4 = ((CH4_sd/CH4_mean)*100),
-               #cv_NH3 = ((NH3_sd/NH3_mean)*100))
-#print(CV)
 
 
 ######## Distribution of Data###########
