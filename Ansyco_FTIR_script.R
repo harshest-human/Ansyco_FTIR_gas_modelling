@@ -106,6 +106,7 @@ plot2a <- ggline(FTIR_input, x="height", y="CO2",
         ylab("CO2  (ppm)")
 
 ggsave("plot2a.pdf", width = 8, height = 4)
+ggsave("plot2a.png", width = 6.5, height = 4.5) #png graph
 
 #CH4 at different speeds
 plot2b <- ggline(FTIR_input, x="height", y="CH4",
@@ -124,6 +125,7 @@ plot2b <- ggline(FTIR_input, x="height", y="CH4",
         ylab("CH4  (ppm)")
 
 ggsave("plot2b.pdf", width = 8, height = 4)
+ggsave("plot2b.png", width = 6.5, height = 4.5) #png graph
 
 #NH3 at different speeds
 plot2c <- ggline(FTIR_input, x="height", y="NH3",
@@ -142,6 +144,7 @@ plot2c <- ggline(FTIR_input, x="height", y="NH3",
         ylab("NH3  (ppm)")
 
 ggsave("plot2c.pdf", width = 8, height = 4)
+ggsave("plot2c.png", width = 6.5, height = 4.5) #png graph
 
 #Saving graphs
 # Combine the three plots horizontally
@@ -314,6 +317,23 @@ plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
 
 ggsave("plot3b.pdf", width = 8, height = 4)
 
+#With Wind speed information (COLOR STANDARDIZATION to blue and green)
+plot3b <- ggline(CH_NH_data, x="height", y="CH_NH_ratio",
+                 add = "mean_se",
+                 shape = 11,
+                 point.size = 1.5,
+                 facet.by ="Samp_loc",
+                 color ="wd_speed",
+                 width=1.5,
+                 position = position_dodge(w=0.15))+
+        scale_color_manual(values = c("chartreuse4","deepskyblue4"))+
+        theme_bw() + theme(legend.position="False",
+                           axis.text = element_text(size=12),
+                           axis.title = element_text(size=12))+
+        xlab("Height  (meters)")+
+        ylab(expression(Ratio ~ (bar(CH[4]/NH[3])))) 
+
+ggsave("plot3b.png", width = 6.5, height = 4.5)
 
 #Saving graphs
 # Combine the three plots horizontally
